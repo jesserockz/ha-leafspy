@@ -2,6 +2,7 @@
   "domain": "leafspy",
   "name": "Leaf Spy",
   "documentation": "https://github.com/jesserockz/ha-leafspy/blob/master/README.md",
+  "issue_tracker": "https://github.com/jesserockz/ha-leafspy/issues",
   "requirements": [],
   "dependencies": ["http"],
   "codeowners": ["@jesserockz"],
