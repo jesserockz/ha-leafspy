@@ -6,5 +6,6 @@
   "requirements": [],
   "dependencies": ["http"],
   "codeowners": ["@jesserockz"],
-  "config_flow": true
+  "config_flow": true,
+  "version": "0.1.2"
 }
