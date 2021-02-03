@@ -44,6 +44,18 @@ custom_components/leafspy/strings.json
 
 ## Configuration is done in the UI
 
+### Android app configuration
+
+Open the Leaf Spy app, go to `Menu` -> `Settings` and scroll down to `Server`. 
+Change the following settings:
+- `Enable`: Yes
+- `Send Interval` can be whatever you prefer.
+- `ID`: `<Car Name>`
+- `PW`: secret generated when the integration was installed
+- `Http` or `Https` depending on the access to your Home Assistant install.
+- `URL`: webhook url generated when the integration was installed 
+  - Note: **Do not** add http or https to the URL.
+
 <!---->
 
 ## Contributions are welcome!
