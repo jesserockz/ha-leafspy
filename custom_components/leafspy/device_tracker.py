@@ -20,7 +20,7 @@ _LOGGER = logging.getLogger(__name__)
 
 PLUG_STATES = [
     "Not Plugged In",
-    "Partially Plugged In"
+    "Partially Plugged In",
     "Plugged In"
 ]
 
