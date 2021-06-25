@@ -181,7 +181,7 @@ def _parse_see_args(message):
             'device_battery': int(message['DevBat']),
             'rpm': int(message['RPM']),
             'gids': int(message['Gids']),
-            'elevation': int(message['Elv']),
+            'elevation': float(message['Elv']),
             'sequence': int(message['Seq'])
         }
     }
