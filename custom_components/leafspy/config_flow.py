@@ -1,11 +1,15 @@
 """Config flow for Leaf Spy."""
 import re
 import secrets
+import voluptuous as vol
 
 from homeassistant import config_entries
+from homeassistant.const import CONF_NAME
 from homeassistant.helpers.network import get_url
 
 from .const import URL_LEAFSPY_PATH, CONF_SECRET, DOMAIN
+
+DATA_SCHEMA = vol.Schema({vol.Required(CONF_NAME): str})
 
 
 class LeafSpyFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -16,28 +20,28 @@ class LeafSpyFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_user(self, user_input=None):
         """Handle a user initiated set up flow to create Leaf Spy webhook."""
-        if self._async_current_entries():
-            return self.async_abort(reason='one_instance_allowed')
-
         if user_input is None:
             return self.async_show_form(
-                step_id='user',
+                step_id="user",
+                data_schema=DATA_SCHEMA,
             )
+
+        await self.async_set_unique_id(user_input[CONF_NAME])
+        self._abort_if_unique_id_configured()
 
         secret = secrets.token_hex(8)
 
-        url = get_url(self.hass, prefer_external = True, prefer_cloud = True)
-        url = "{}{}".format(url, URL_LEAFSPY_PATH)
+        url = get_url(self.hass, prefer_external=True, prefer_cloud=True)
+        url = f"{url}{URL_LEAFSPY_PATH}{secret}"
         url = re.sub(r"https?://", "", url)
 
         return self.async_create_entry(
-            title="Leaf Spy",
-            data={
-                CONF_SECRET: secret
-            },
+            title=user_input[CONF_NAME],
+            data={CONF_SECRET: secret},
             description_placeholders={
-                'secret': secret,
-                'url': url,
-                'docs_url': 'https://www.home-assistant.io/components/leafspy/'
-            }
+                "name": user_input[CONF_NAME],
+                "secret": secret,
+                "url": url,
+                "docs_url": "https://github.com/jesserockz/ha-leafspy/",
+            },
         )

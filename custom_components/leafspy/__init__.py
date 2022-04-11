@@ -3,48 +3,43 @@ import asyncio
 import hmac
 import logging
 
-from aiohttp.web import Response
-import voluptuous as vol
+from aiohttp.web import Response, Request
 
 from homeassistant.components.http.view import HomeAssistantView
-from homeassistant.config_entries import SOURCE_IMPORT, ConfigEntry
-from homeassistant.core import callback, HomeAssistant
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import Platform
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers import device_registry as dr, entity_registry as er
+from homeassistant.helpers.dispatcher import async_dispatcher_send
 
+from .models import LeafspyMessage
 from .config_flow import CONF_SECRET, DOMAIN, URL_LEAFSPY_PATH
-from .device_tracker import async_handle_message
 
 _LOGGER = logging.getLogger(__name__)
 
-PLATFORMS = ["device_tracker"]
+PLATFORMS = [
+    Platform.SENSOR,
+    Platform.BINARY_SENSOR,
+    # Platform.DEVICE_TRACKER,
+]
 
 
-async def async_setup(hass, config):
-    """Initialize Leaf Spy component."""
-    hass.data[DOMAIN] = {
-        'devices': {},
-        'unsub': None,
-    }
-    return True
-
-
-async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
+async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Leaf Spy entry."""
     secret = entry.data[CONF_SECRET]
 
-    context = LeafSpyContext(hass, secret)
+    device_registry = dr.async_get(hass)
 
-    hass.data[DOMAIN]['context'] = context
-
-    hass.http.register_view(LeafSpyView())
+    hass.http.register_view(LeafSpyView(hass, secret, entry, device_registry))
 
     for component in PLATFORMS:
         hass.async_create_task(
             hass.config_entries.async_forward_entry_setup(entry, component)
         )
 
-    hass.data[DOMAIN]['unsub'] = \
-        hass.helpers.dispatcher.async_dispatcher_connect(
-            DOMAIN, async_handle_message)
+    # hass.data[DOMAIN]["unsub"] = hass.helpers.dispatcher.async_dispatcher_connect(
+    #     DOMAIN, async_handle_message
+    # )
 
     return True
 
@@ -59,57 +54,59 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
             ]
         )
     )
-    if unload_ok:
-        hass.data[DOMAIN].pop(entry.entry_id)
+    # if unload_ok:
+    #     hass.data[DOMAIN].pop(entry.entry_id)
 
-    hass.data[DOMAIN]["unsub"]()
+    # hass.data[DOMAIN]["unsub"]()
 
     return True
-
-
-class LeafSpyContext:
-    """Hold the current Leaf Spy context."""
-
-    def __init__(self, hass, secret):
-        """Initialize a Leaf Spy context."""
-        self.hass = hass
-        self.secret = secret
-        self._pending_msg = []
-
-    @callback
-    def set_async_see(self, func):
-        """Set a new async_see function."""
-        self.async_see = func
-        for msg in self._pending_msg:
-            func(**msg)
-        self._pending_msg.clear()
-
-    # pylint: disable=method-hidden
-    @callback
-    def async_see(self, **data):
-        """Send a see message to the device tracker."""
-        self._pending_msg.append(data)
 
 
 class LeafSpyView(HomeAssistantView):
     """Handle incoming Leaf Spy requests."""
 
-    url = URL_LEAFSPY_PATH
     name = "api:leafspy"
     requires_auth = False
 
-    async def get(self, request):
-        """Handle leafspy call."""
-        hass = request.app['hass']
-        context = hass.data[DOMAIN]['context']
+    def __init__(
+        self,
+        hass: HomeAssistant,
+        secret: str,
+        entry: ConfigEntry,
+        device_registry: dr.DeviceRegistry,
+    ):
+        """Initialize the Leaf Spy view."""
+        self.hass = hass
+        self.secret = secret
+        self.entry = entry
+        self.device_registry = device_registry
+        self.url = f"{URL_LEAFSPY_PATH}{self.entry.data[CONF_SECRET]}"
 
+    async def get(self, request: Request):
+        """Handle leafspy call."""
         try:
             message = request.query
-            if not hmac.compare_digest(message['pass'], context.secret):
+            message = dict(message)
+            if not hmac.compare_digest(message.pop("pass"), self.secret):
                 raise Exception("Invalid password")
 
-            hass.helpers.dispatcher.async_dispatcher_send(
-                DOMAIN, hass, context, message)
+            message = LeafspyMessage(**message)
+            device = self.device_registry.async_get_or_create(
+                config_entry_id=self.entry.entry_id,
+                identifiers={(DOMAIN, message.VIN)},
+                manufacturer="Nissan",
+                name=message.user,
+                model=message.VIN.split("-")[0],
+            )
+
+            entity_registry = er.async_get(self.hass)
+            entities = er.async_entries_for_device(entity_registry, device.id)
+
+            if entities:
+                async_dispatcher_send(self.hass, f"{DOMAIN}_update_device", message)
+            else:
+                async_dispatcher_send(self.hass, f"{DOMAIN}_new_device", message)
+                async_dispatcher_send(self.hass, f"{DOMAIN}_update_device", message)
 
             return Response(status=200, text='"status":"0"')
         except Exception:  # pylint: disable=broad-except
