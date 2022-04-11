@@ -74,8 +74,8 @@ class LeafSpyEntity(TrackerEntity, RestoreEntity):
 
     @property
     def extra_state_attributes(self):
-        """Return device specific attributes."""
-        return self._data.get("attributes")
+        """Return extra attributes."""
+        return self._data.get('attributes')
 
     @property
     def latitude(self):
