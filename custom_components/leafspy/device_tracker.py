@@ -91,8 +91,8 @@ class LeafSpyEntity(TrackerEntity, RestoreEntity):
         return self._data.get('battery_level')
 
     @property
-    def device_state_attributes(self):
-        """Return device specific attributes."""
+    def extra_state_attributes(self):
+        """Return extra attributes."""
         return self._data.get('attributes')
 
     @property
