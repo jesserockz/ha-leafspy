@@ -172,6 +172,7 @@ def _parse_see_args(message):
             'trip': int(message['Trip']),
             'odometer': int(message['Odo']),
             'battery_temperature': float(message['BatTemp']),
+            'battery_health': float(message['SOH']),
             'outside_temperature': float(message['Amb']),
             'plug_state': PLUG_STATES[int(message['PlugState'])],
             'charge_mode': CHARGE_MODES[int(message['ChrgMode'])],
