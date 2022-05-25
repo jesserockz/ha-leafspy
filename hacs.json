@@ -1,9 +1,6 @@
 {
     "name": "Leaf Spy",
     "hacs": "0.24.0",
-    "domains": [
-        "device_tracker"
-    ],
     "iot_class": "Local Push",
     "homeassistant": "0.110.0"
 }
