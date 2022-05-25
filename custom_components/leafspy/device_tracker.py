@@ -170,7 +170,7 @@ def _parse_see_args(message):
         'attributes': {
             'amp_hours': float(message['AHr']),
             'trip': int(message['Trip']),
-            'odometer': int(message['Odo']),
+            'odometer': float(message['Odo']),
             'battery_temperature': float(message['BatTemp']),
             'battery_health': float(message['SOH']),
             'outside_temperature': float(message['Amb']),
