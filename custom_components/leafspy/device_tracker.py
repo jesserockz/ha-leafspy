@@ -34,7 +34,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
     hass.data[LS_DOMAIN]["context"].set_async_see(_receive_data)
 
     # Restore previously loaded devices
-    dev_reg = await device_registry.async_get_registry(hass)
+    dev_reg = device_registry.async_get(hass)
     dev_ids = {
         identifier[1]
         for device in dev_reg.devices.values()
@@ -151,7 +151,7 @@ def _parse_see_args(message):
         "attributes": {
             "amp_hours": float(message["AHr"]),
             "trip": int(message["Trip"]),
-            "odometer": int(message["Odo"]),
+            "odometer": float(message["Odo"]),
             "battery_temperature": float(message["BatTemp"]),
             "outside_temperature": float(message["Amb"]),
             "plug_state": PLUG_STATES[int(message["PlugState"])],
