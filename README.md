@@ -1,3 +1,8 @@
+# UNMAINTAINED
+
+I personally do not use leafspy anymore and will not be monitoring this repository going forward. 
+
+
 # leafspy
 
 [![GitHub Release][releases-shield]][releases]
