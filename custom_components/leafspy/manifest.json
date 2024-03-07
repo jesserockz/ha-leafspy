@@ -1,12 +1,12 @@
 {
   "domain": "leafspy",
   "name": "Leaf Spy",
-  "codeowners": ["@jesserockz"],
+  "codeowners": ["@wtadler"],
   "config_flow": true,
   "dependencies": ["http"],
-  "documentation": "https://github.com/jesserockz/ha-leafspy/blob/master/README.md",
+  "documentation": "https://github.com/jesserockz/ha-leafspy/blob/main/README.md",
   "iot_class": "local_push",
   "issue_tracker": "https://github.com/jesserockz/ha-leafspy/issues",
   "requirements": [],
-  "version": "0.2.0"
+  "version": "0.2.1"
 }
