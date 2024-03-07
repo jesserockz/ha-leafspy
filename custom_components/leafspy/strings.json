@@ -1,10 +1,10 @@
 {
   "config": {
     "abort": {
-      "one_instance_allowed": "Only a single instance is necessary."
+      "one_instance_allowed": "You may have only one instance of Leaf Spy installed, and you appear to have installed one already."
     },
     "create_entry": {
-      "default": "\n\nOpen the Leaf Spy app, go to `'Menu'` -> `'Settings'` and scroll down to `'Server'`. \nChange the following settings:\n - `'Enable'`: Yes\n - `'Send Interval'` can be whatever you prefer.\n - `'ID'`: `'<Car Name>'`\n - `'PW'`: {secret}\n - `'Http'` or `'Https'` depending on the access to your Home Assistant install.\n - `'URL'`: {url} - Note: **Do not** add http or https to the URL."
+      "default": "\n\nOpen the Leaf Spy app, go to `'Menu'` -> `'Settings'` and scroll down to `'Server'`. \nChange the following settings:\n - `'Enable'`: Yes\n - `'Send Interval'` can be whatever you prefer.\n - `'ID'`: `'(Car Name)'`\n - `'PW'`: {secret}\n - `'Http'` or `'Https'` depending on the access to your Home Assistant install.\n - `'URL'`: {url} - Note: **Do not** add http or https to the URL."
     },
     "step": {
       "user": {

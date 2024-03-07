@@ -7,7 +7,7 @@ from homeassistant.const import (
     ATTR_LONGITUDE,
     ATTR_BATTERY_LEVEL,
 )
-from homeassistant.components.device_tracker.const import SOURCE_TYPE_GPS
+from homeassistant.components.device_tracker.const import SourceType
 from homeassistant.components.device_tracker.config_entry import (
     TrackerEntity
 )
@@ -118,7 +118,7 @@ class LeafSpyEntity(TrackerEntity, RestoreEntity):
     @property
     def source_type(self):
         """Return the source type of the car."""
-        return SOURCE_TYPE_GPS
+        return SourceType.GPS
 
     @property
     def device_info(self):
