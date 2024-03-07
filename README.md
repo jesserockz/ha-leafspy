@@ -1,8 +1,3 @@
-# UNMAINTAINED
-
-I personally do not use leafspy anymore and will not be monitoring this repository going forward. 
-
-
 # leafspy
 
 [![GitHub Release][releases-shield]][releases]
@@ -71,7 +66,7 @@ If you want to contribute to this please read the [Contribution guidelines](CONT
 
 [leafspy]: https://play.google.com/store/apps/details?id=com.Turbo3.Leaf_Spy_Pro
 [commits-shield]: https://img.shields.io/github/commit-activity/y/jesserockz/ha-leafspy.svg?style=for-the-badge
-[commits]: https://github.com/jesserockz/ha-leafspy/commits/master
+[commits]: https://github.com/jesserockz/ha-leafspy/commits/main
 [hacs]: https://github.com/custom-components/hacs
 [hacsbadge]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge
 [discord]: https://discord.gg/Qa5fW2R
@@ -80,6 +75,6 @@ If you want to contribute to this please read the [Contribution guidelines](CONT
 [forum-shield]: https://img.shields.io/badge/community-forum-brightgreen.svg?style=for-the-badge
 [forum]: https://community.home-assistant.io/
 [license-shield]: https://img.shields.io/github/license/jesserockz/ha-leafspy.svg?style=for-the-badge
-[maintenance-shield]: https://img.shields.io/badge/maintainer-Jesse%20Hills%20%40jesserockz-blue.svg?style=for-the-badge
+[maintenance-shield]: https://img.shields.io/badge/maintainer-Will%20Adler%20%40wtadler-blue.svg?style=for-the-badge
 [releases-shield]: https://img.shields.io/github/release/jesserockz/ha-leafspy.svg?style=for-the-badge
 [releases]: https://github.com/jesserockz/ha-leafspy/releases
