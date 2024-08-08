@@ -1,5 +1,3 @@
 {
-    "name": "Leaf Spy",
-    "hacs": "0.24.0",
-    "homeassistant": "0.110.0"
+    "name": "Leaf Spy"
 }
