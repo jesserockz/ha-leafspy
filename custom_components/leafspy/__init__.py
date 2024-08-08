@@ -9,6 +9,7 @@ import voluptuous as vol
 from homeassistant.components.http.view import HomeAssistantView
 from homeassistant.config_entries import SOURCE_IMPORT, ConfigEntry
 from homeassistant.core import callback, HomeAssistant
+from homeassistant.helpers.dispatcher import async_dispatcher_connect
 
 from .config_flow import CONF_SECRET, DOMAIN, URL_LEAFSPY_PATH
 from .device_tracker import async_handle_message
@@ -43,8 +44,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         )
 
     hass.data[DOMAIN]['unsub'] = \
-        hass.helpers.dispatcher.async_dispatcher_connect(
-            DOMAIN, async_handle_message)
+        async_dispatcher_connect(hass, DOMAIN, async_handle_message)
 
     return True
 
