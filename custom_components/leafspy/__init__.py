@@ -38,10 +38,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 
     hass.http.register_view(LeafSpyView())
 
-    for component in PLATFORMS:
-        hass.async_create_task(
-            hass.config_entries.async_forward_entry_setup(entry, component)
-        )
+    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
     hass.data[DOMAIN]['unsub'] = \
         async_dispatcher_connect(hass, DOMAIN, async_handle_message)
