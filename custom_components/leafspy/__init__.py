@@ -9,7 +9,7 @@ import voluptuous as vol
 from homeassistant.components.http.view import HomeAssistantView
 from homeassistant.config_entries import SOURCE_IMPORT, ConfigEntry
 from homeassistant.core import callback, HomeAssistant
-from homeassistant.helpers.dispatcher import async_dispatcher_connect
+from homeassistant.helpers.dispatcher import async_dispatcher_connect, async_dispatcher_send
 
 from .config_flow import CONF_SECRET, DOMAIN, URL_LEAFSPY_PATH
 from .device_tracker import async_handle_message
@@ -105,8 +105,7 @@ class LeafSpyView(HomeAssistantView):
             if not hmac.compare_digest(message['pass'], context.secret):
                 raise Exception("Invalid password")
 
-            hass.helpers.dispatcher.async_dispatcher_send(
-                DOMAIN, hass, context, message)
+            async_dispatcher_send(DOMAIN, hass, context, message)
 
             return Response(status=200, text='"status":"0"')
         except Exception:  # pylint: disable=broad-except
