@@ -105,7 +105,7 @@ class LeafSpyView(HomeAssistantView):
             if not hmac.compare_digest(message['pass'], context.secret):
                 raise Exception("Invalid password")
 
-            async_dispatcher_send(DOMAIN, hass, context, message)
+            async_dispatcher_send(hass, DOMAIN, context, message)
 
             return Response(status=200, text='"status":"0"')
         except Exception:  # pylint: disable=broad-except

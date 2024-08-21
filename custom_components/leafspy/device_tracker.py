@@ -190,7 +190,7 @@ def _parse_see_args(message):
     return args
 
 
-async def async_handle_message(hass, context, message):
+async def async_handle_message(context, message):
     """Handle an Leaf Spy message."""
     _LOGGER.debug("Received %s", message)
 
