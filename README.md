@@ -16,7 +16,7 @@ _Component to integrate with [leafspy][leafspy]._
 
 Platform | Description
 -- | --
-`device_tracker` | Track a Nissan Leaf using the Leaf Spy app.
+`device_tracker` | Track a Nissan Leaf using the Leaf Spy app. Data about the vehicle sent from Leaf Spy will be viewable under Attributes
 
 ![leafspy][leafspyimg]
 
@@ -46,7 +46,7 @@ custom_components/leafspy/strings.json
 
 ## Configuration is done in the UI
 
-### Android app configuration
+### Android/iOS app configuration
 
 Open the Leaf Spy app, go to `Menu` -> `Settings` and scroll down to `Server`. 
 Change the following settings:
