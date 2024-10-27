@@ -9,7 +9,10 @@ import voluptuous as vol
 from homeassistant.components.http.view import HomeAssistantView
 from homeassistant.config_entries import SOURCE_IMPORT, ConfigEntry
 from homeassistant.core import callback, HomeAssistant
+from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.dispatcher import async_dispatcher_connect, async_dispatcher_send
+
+
 
 from .config_flow import CONF_SECRET, DOMAIN, URL_LEAFSPY_PATH
 from .device_tracker import async_handle_message
@@ -18,6 +21,8 @@ _LOGGER = logging.getLogger(__name__)
 
 PLATFORMS = ["device_tracker"]
 
+# Use empty_config_schema because the component does not have any config options
+CONFIG_SCHEMA = cv.empty_config_schema(DOMAIN)
 
 async def async_setup(hass, config):
     """Initialize Leaf Spy component."""
