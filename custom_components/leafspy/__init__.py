@@ -19,7 +19,7 @@ from .device_tracker import async_handle_message
 
 _LOGGER = logging.getLogger(__name__)
 
-PLATFORMS = ["device_tracker"]
+PLATFORMS = ["device_tracker", "sensor"]
 
 # Use empty_config_schema because the component does not have any config options
 CONFIG_SCHEMA = cv.empty_config_schema(DOMAIN)
