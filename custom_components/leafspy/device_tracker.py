@@ -18,20 +18,6 @@ from .const import DOMAIN as LS_DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
-PLUG_STATES = [
-    "Not Plugged In",
-    "Partially Plugged In",
-    "Plugged In"
-]
-
-CHARGE_MODES = [
-    "Not Charging",
-    "Level 1 Charging (100-120 Volts)",
-    "Level 2 Charging (200-240 Volts)",
-    "Level 3 Quick Charging"
-]
-
-
 async def async_setup_entry(hass, entry, async_add_entities):
     """Set up Leaf Spy based off an entry."""
     async def _receive_data(dev_id, **data):
