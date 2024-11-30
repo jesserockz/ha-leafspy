@@ -91,11 +91,6 @@ class LeafSpyEntity(TrackerEntity, RestoreEntity):
         return self._data.get('battery_level')
 
     @property
-    def extra_state_attributes(self):
-        """Return extra attributes."""
-        return self._data.get('attributes')
-
-    @property
     def latitude(self):
         """Return latitude value of the car."""
         return self._data.get('latitude')
@@ -147,8 +142,6 @@ class LeafSpyEntity(TrackerEntity, RestoreEntity):
             'latitude': attr.get(ATTR_LATITUDE),
             'longitude': attr.get(ATTR_LONGITUDE),
             'battery_level': attr.get(ATTR_BATTERY_LEVEL),
-            'attributes': attr
-
         }
 
     @callback
@@ -166,25 +159,7 @@ def _parse_see_args(message):
         'device_name': message['user'],
         'latitude': float(message['Lat']),
         'longitude': float(message['Long']),
-        'battery_level': float(message['SOC']),
-        'attributes': {
-            'amp_hours': float(message['AHr']),
-            'trip': int(message['Trip']),
-            'odometer': float(message['Odo']),
-            'battery_temperature': float(message['BatTemp']),
-            'battery_health': float(message['SOH']),
-            'outside_temperature': float(message['Amb']),
-            'plug_state': PLUG_STATES[int(message['PlugState'])],
-            'charge_mode': CHARGE_MODES[int(message['ChrgMode'])],
-            'charge_power': int(message['ChrgPwr']),
-            'vin': message['VIN'],
-            'power_switch': message['PwrSw'] == '1',
-            'device_battery': int(message['DevBat']),
-            'rpm': int(message['RPM']),
-            'gids': int(message['Gids']),
-            'elevation': float(message['Elv']),
-            'sequence': int(message['Seq'])
-        }
+        'battery_level': float(message['SOC'])
     }
 
     return args
