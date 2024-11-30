@@ -93,7 +93,6 @@ SENSOR_TYPES = [
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.get("SOC"),
         transform_fn=lambda x: round(float(x), 2) if x is not None else None,
-        transform_fn=lambda x: float(x) if x is not None else None,
     ),
     LeafSpySensorDescription(
         key="capacity (AHr)",
