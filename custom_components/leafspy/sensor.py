@@ -60,6 +60,7 @@ SENSOR_TYPES = [
         device_class=SensorDeviceClass.DISTANCE,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.get("Elv"),
+        transform_fn=lambda x: int(round(float(x), 0)) if x is not None else None,
         icon="mdi:elevation-rise",
     ),
     LeafSpySensorDescription(
@@ -91,6 +92,7 @@ SENSOR_TYPES = [
         device_class=SensorDeviceClass.BATTERY,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.get("SOC"),
+        transform_fn=lambda x: round(float(x), 2) if x is not None else None,
         transform_fn=lambda x: float(x) if x is not None else None,
     ),
     LeafSpySensorDescription(
