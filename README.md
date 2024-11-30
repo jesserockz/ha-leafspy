@@ -16,7 +16,8 @@ _Component to integrate with [leafspy][leafspy]._
 
 Platform | Description
 -- | --
-`device_tracker` | Track a Nissan Leaf using the Leaf Spy app. Data about the vehicle sent from Leaf Spy will be viewable under Attributes
+`device_tracker` | Track a Nissan Leaf using the Leaf Spy app. 
+`sensor` | All data about the vehicle sent from Leaf Spy is displayed as independent sensors.
 
 ![leafspy][leafspyimg]
 
@@ -40,6 +41,7 @@ custom_components/leafspy/__init__.py
 custom_components/leafspy/config_flow.py
 custom_components/leafspy/const.py
 custom_components/leafspy/device_tracker.py
+custom_components/leafspy/sensor.py
 custom_components/leafspy/manifest.json
 custom_components/leafspy/strings.json
 ```
