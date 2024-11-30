@@ -17,7 +17,7 @@ _Component to integrate with [leafspy][leafspy]._
 Platform | Description
 -- | --
 `device_tracker` | Track a Nissan Leaf using the Leaf Spy app. 
-`sensor` | All data about the vehicle sent from Leaf Spy is displayed as independent sensors.
+`sensor` | All data about the vehicle sent from Leaf Spy is displayed as independent sensors. They won't appear in Home Assistant until data is received.
 
 ![leafspy][leafspyimg]
 
