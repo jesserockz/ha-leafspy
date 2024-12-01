@@ -43,6 +43,7 @@ custom_components/leafspy/config_flow.py
 custom_components/leafspy/const.py
 custom_components/leafspy/device_tracker.py
 custom_components/leafspy/sensor.py
+custom_components/leafspy/binary_sensor.py
 custom_components/leafspy/manifest.json
 custom_components/leafspy/strings.json
 ```
