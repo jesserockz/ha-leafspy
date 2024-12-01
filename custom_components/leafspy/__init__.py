@@ -19,7 +19,7 @@ from .device_tracker import async_handle_message
 
 _LOGGER = logging.getLogger(__name__)
 
-PLATFORMS = ["device_tracker", "sensor"]
+PLATFORMS = ["device_tracker", "sensor", "binary_sensor"]
 
 # Use empty_config_schema because the component does not have any config options
 CONFIG_SCHEMA = cv.empty_config_schema(DOMAIN)
@@ -28,6 +28,7 @@ async def async_setup(hass, config):
     """Initialize Leaf Spy component."""
     hass.data[DOMAIN] = {
         'devices': {},
+        'sensors': {},
         'unsub': None,
     }
     return True
@@ -44,7 +45,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     hass.http.register_view(LeafSpyView())
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
-
+    
     hass.data[DOMAIN]['unsub'] = \
         async_dispatcher_connect(hass, DOMAIN, async_handle_message)
 
