@@ -1,6 +1,6 @@
 """Sensor platform that adds support for Leaf Spy."""
 import logging
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Any, Callable
 
 from homeassistant.components.sensor import (
@@ -35,6 +35,14 @@ class LeafSpySensorDescription(SensorEntityDescription):
     """Describes Leaf Spy sensor."""
     value_fn: Callable[[dict], Any] = field(default=lambda data: None)
     transform_fn: Callable[[Any], Any] = field(default=lambda x: x)
+    unit_fn: Callable[[dict], str] = field(default=lambda data: None)
+
+def _get_temperature_unit(data):
+    """Determine the temperature unit based on Tunits."""
+    tunits = data.get("Tunits", "").lower()
+    if tunits == "f":
+        return UnitOfTemperature.FAHRENHEIT
+    return UnitOfTemperature.CELSIUS
 
 SENSOR_TYPES = [
     LeafSpySensorDescription(
@@ -92,7 +100,7 @@ SENSOR_TYPES = [
         device_class=SensorDeviceClass.BATTERY,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.get("SOC"),
-        transform_fn=lambda x: round(float(x), 2) if x is not None else None,
+        transform_fn=lambda x: int(round(float(x), 0)) if x is not None else None,
     ),
     LeafSpySensorDescription(
         key="capacity (AHr)",
@@ -110,6 +118,7 @@ SENSOR_TYPES = [
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.get("BatTemp"),
         transform_fn=lambda x: float(x) if x is not None else None,
+        unit_fn=_get_temperature_unit,
         icon="mdi:thermometer",
     ),
     LeafSpySensorDescription(
@@ -120,6 +129,7 @@ SENSOR_TYPES = [
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.get("Amb"),
         transform_fn=lambda x: float(x) if x is not None else None,
+        unit_fn=_get_temperature_unit,
         icon="mdi:sun-thermometer",
     ),
     LeafSpySensorDescription(
@@ -195,12 +205,6 @@ SENSOR_TYPES = [
         icon="mdi:identifier",
     ),
     LeafSpySensorDescription(
-        key="power switch",
-        translation_key="power_switch_state",
-        value_fn=lambda data: data.get("PwrSw"),
-        icon="mdi:power",
-    ),
-    LeafSpySensorDescription(
         key="temperature units",
         translation_key="temperature_units",
         value_fn=lambda data: data.get("Tunits"),
@@ -270,7 +274,6 @@ async def async_setup_entry(
     async def _process_message(context, message):
         """Process incoming sensor messages."""
         try:
-            _LOGGER.debug("Incoming message: %s", message)
             if 'VIN' not in message:
                 return
 
@@ -287,15 +290,27 @@ async def async_setup_entry(
 
                 if value is not None:
                     sensor = hass.data[DOMAIN]['sensors'].get(sensor_id)
+                    
+                    # Dynamically update temperature unit if applicable
+                    sensor_description = description
+                    if description.unit_fn:
+                        unit = description.unit_fn(message)
+                        if unit:
+                            sensor_description = replace(description, 
+                                native_unit_of_measurement=unit)
+
                     if sensor is not None:
+                        # Update with potentially new unit
+                        sensor.entity_description = sensor_description
                         sensor.update_state(value)
                     else:
-                        sensor = LeafSpySensor(dev_id, description, value)
+                        sensor = LeafSpySensor(dev_id, sensor_description, value)
                         hass.data[DOMAIN]['sensors'][sensor_id] = sensor
                         async_add_entities([sensor])
 
         except Exception as err:
             _LOGGER.error("Error processing Leaf Spy message: %s", err)
+            _LOGGER.exception("Full traceback")
 
     async_dispatcher_connect(hass, DOMAIN, _process_message)
     return True
