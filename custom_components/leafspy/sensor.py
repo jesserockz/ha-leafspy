@@ -22,6 +22,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.restore_state import RestoreEntity
+from homeassistant.helpers import device_registry
 from homeassistant.components.sensor import SensorEntityDescription
 from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 from homeassistant.util import slugify
@@ -300,20 +301,48 @@ async def async_setup_entry(
                                 native_unit_of_measurement=unit)
 
                     if sensor is not None:
-                        # Update with potentially new unit
+                        # Update existing sensor
                         sensor.entity_description = sensor_description
                         sensor.update_state(value)
                     else:
+                        # Add a new sensor
                         sensor = LeafSpySensor(dev_id, sensor_description, value)
                         hass.data[DOMAIN]['sensors'][sensor_id] = sensor
                         async_add_entities([sensor])
+
+                        # Add a log to confirm the sensor is being registered
+                        _LOGGER.debug(f"Registered sensor: {sensor.name} with initial value: {value}")
 
         except Exception as err:
             _LOGGER.error("Error processing Leaf Spy message: %s", err)
             _LOGGER.exception("Full traceback")
 
     async_dispatcher_connect(hass, DOMAIN, _process_message)
+    
+    # Restore previously loaded sensors
+    dev_reg = device_registry.async_get(hass)
+    dev_ids = {
+        identifier[1]
+        for device in dev_reg.devices.values()
+        for identifier in device.identifiers
+        if identifier[0] == DOMAIN
+    }
+
+    if not dev_ids:
+        return True
+
+    entities = []
+    for dev_id in dev_ids:
+        # For each device ID, recreate the sensor entities
+        for description in SENSOR_TYPES:
+            sensor_id = f"{dev_id}_{description.key}"
+            sensor = LeafSpySensor(dev_id, description, None)  # Initializing with None
+            hass.data[DOMAIN]['sensors'][sensor_id] = sensor
+            entities.append(sensor)
+
+    async_add_entities(entities)
     return True
+
 
 
 class LeafSpySensor(SensorEntity, RestoreEntity):
@@ -346,6 +375,11 @@ class LeafSpySensor(SensorEntity, RestoreEntity):
         return {
             "identifiers": {(DOMAIN, self._device_id)},
         }
+    
+    @property
+    def should_poll(self) -> bool:
+        """Disable polling for this sensor."""
+        return False
 
     def update_state(self, new_value):
         """Update the sensor state."""
@@ -355,11 +389,19 @@ class LeafSpySensor(SensorEntity, RestoreEntity):
     async def async_added_to_hass(self):
         """Restore last known state."""
         await super().async_added_to_hass()
-        
+
+        # Add this log line to confirm the method is being called
+        _LOGGER.debug(f"async_added_to_hass called for {self.name}")
+
+        # Retrieve the last known state
         last_state = await self.async_get_last_state()
         if last_state:
+            # Log the restored state before transforming
+            _LOGGER.debug(f"Restored state for {self.name}: {last_state.state}")
+
             try:
                 transform_fn = self.entity_description.transform_fn
                 self._value = transform_fn(last_state.state)
+                self.async_write_ha_state()  # Make sure the restored state is written
             except (ValueError, TypeError):
                 _LOGGER.warning(f"Could not restore state for {self.name}")

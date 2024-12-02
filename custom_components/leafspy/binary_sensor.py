@@ -12,6 +12,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.restore_state import RestoreEntity
+from homeassistant.helpers import device_registry
 from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 from homeassistant.util import slugify
 
@@ -77,6 +78,27 @@ async def async_setup_entry(
             _LOGGER.error("Error processing Leaf Spy message: %s", err)
 
     async_dispatcher_connect(hass, DOMAIN, _process_message)
+
+    # Restore previously loaded devices
+    dev_reg = device_registry.async_get(hass)
+    dev_ids = {
+        identifier[1]
+        for device in dev_reg.devices.values()
+        for identifier in device.identifiers
+        if identifier[0] == DOMAIN
+    }
+
+    if not dev_ids:
+        return True
+
+    entities = []
+    for dev_id in dev_ids:
+        entity = hass.data[DOMAIN]['binary_sensors'].get(dev_id)
+        if entity is None:
+            entity = LeafSpyBinarySensor(dev_id, BINARY_SENSOR_TYPES[0], False)
+            entities.append(entity)
+        async_add_entities(entities)
+
     return True
 
 
@@ -127,3 +149,6 @@ class LeafSpyBinarySensor(BinarySensorEntity, RestoreEntity):
                 self._value = transform_fn(last_state.state)
             except (ValueError, TypeError):
                 _LOGGER.warning(f"Could not restore state for {self.name}")
+        
+        # Add this log line to confirm the method is being called
+        _LOGGER.debug(f"async_added_to_hass called for {self.name}")
