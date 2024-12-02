@@ -18,20 +18,6 @@ from .const import DOMAIN as LS_DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
-PLUG_STATES = [
-    "Not Plugged In",
-    "Partially Plugged In",
-    "Plugged In"
-]
-
-CHARGE_MODES = [
-    "Not Charging",
-    "Level 1 Charging (100-120 Volts)",
-    "Level 2 Charging (200-240 Volts)",
-    "Level 3 Quick Charging"
-]
-
-
 async def async_setup_entry(hass, entry, async_add_entities):
     """Set up Leaf Spy based off an entry."""
     async def _receive_data(dev_id, **data):
@@ -91,11 +77,6 @@ class LeafSpyEntity(TrackerEntity, RestoreEntity):
         return self._data.get('battery_level')
 
     @property
-    def extra_state_attributes(self):
-        """Return extra attributes."""
-        return self._data.get('attributes')
-
-    @property
     def latitude(self):
         """Return latitude value of the car."""
         return self._data.get('latitude')
@@ -147,8 +128,6 @@ class LeafSpyEntity(TrackerEntity, RestoreEntity):
             'latitude': attr.get(ATTR_LATITUDE),
             'longitude': attr.get(ATTR_LONGITUDE),
             'battery_level': attr.get(ATTR_BATTERY_LEVEL),
-            'attributes': attr
-
         }
 
     @callback
@@ -166,25 +145,7 @@ def _parse_see_args(message):
         'device_name': message['user'],
         'latitude': float(message['Lat']),
         'longitude': float(message['Long']),
-        'battery_level': float(message['SOC']),
-        'attributes': {
-            'amp_hours': float(message['AHr']),
-            'trip': int(message['Trip']),
-            'odometer': float(message['Odo']),
-            'battery_temperature': float(message['BatTemp']),
-            'battery_health': float(message['SOH']),
-            'outside_temperature': float(message['Amb']),
-            'plug_state': PLUG_STATES[int(message['PlugState'])],
-            'charge_mode': CHARGE_MODES[int(message['ChrgMode'])],
-            'charge_power': int(message['ChrgPwr']),
-            'vin': message['VIN'],
-            'power_switch': message['PwrSw'] == '1',
-            'device_battery': int(message['DevBat']),
-            'rpm': int(message['RPM']),
-            'gids': int(message['Gids']),
-            'elevation': float(message['Elv']),
-            'sequence': int(message['Seq'])
-        }
+        'battery_level': float(message['SOC'])
     }
 
     return args
