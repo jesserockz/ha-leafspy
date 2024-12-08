@@ -48,15 +48,15 @@ def _get_temperature_unit(data):
 SENSOR_TYPES = [
     LeafSpySensorDescription(
         key="phone battery",
-        translation_key="device_battery",
+        translation_key="phone_battery",
         native_unit_of_measurement=PERCENTAGE,
         device_class=SensorDeviceClass.BATTERY,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.get("DevBat"),
     ),
     LeafSpySensorDescription(
-        key="Gids",
-        translation_key="gids",
+        key="battery gids",
+        translation_key="battery_gids",
         native_unit_of_measurement="Gids",
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.get("Gids"),
@@ -73,7 +73,7 @@ SENSOR_TYPES = [
         icon="mdi:elevation-rise",
     ),
     LeafSpySensorDescription(
-        key="sequence",
+        key="sequence number",
         translation_key="sequence_number",
         value_fn=lambda data: data.get("Seq"),
         icon="mdi:numeric",
@@ -85,7 +85,7 @@ SENSOR_TYPES = [
         icon="mdi:road-variant",
     ),
     LeafSpySensorDescription(
-        key="mileage",
+        key="odometer",
         translation_key="odometer",
         native_unit_of_measurement=UnitOfLength.KILOMETERS,
         device_class=SensorDeviceClass.DISTANCE,
@@ -95,7 +95,7 @@ SENSOR_TYPES = [
         icon="mdi:counter",
     ),
     LeafSpySensorDescription(
-        key="battery level (SOC)",
+        key="battery state of charge",
         translation_key="state_of_charge",
         native_unit_of_measurement=PERCENTAGE,
         device_class=SensorDeviceClass.BATTERY,
@@ -104,11 +104,12 @@ SENSOR_TYPES = [
         transform_fn=lambda x: int(round(float(x), 0)) if x is not None else None,
     ),
     LeafSpySensorDescription(
-        key="capacity (AHr)",
-        translation_key="AHr_capacity",
+        key="battery capacity",
+        translation_key="battery_capacity",
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.get("AHr"),
         transform_fn=lambda x: float(x) if x is not None else None,
+        native_unit_of_measurement="Ah",
         icon="mdi:battery-heart-variant",
     ),
     LeafSpySensorDescription(
@@ -140,11 +141,10 @@ SENSOR_TYPES = [
         device_class=SensorDeviceClass.POWER,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.get("ChrgPwr"),
-        icon="mdi:lightning-bolt",
     ),
     LeafSpySensorDescription(
         key="front wiper",
-        translation_key="front_wiper_status",
+        translation_key="front_wiper",
         device_class=SensorDeviceClass.ENUM,
         value_fn=lambda data: {
             80: "High",
@@ -164,8 +164,8 @@ SENSOR_TYPES = [
         ]
     ),
     LeafSpySensorDescription(
-        key="plug state",
-        translation_key="plug_state",
+        key="plug",
+        translation_key="plug",
         device_class=SensorDeviceClass.ENUM,
         value_fn=lambda data: {
             0: "Not plugged",
@@ -201,7 +201,7 @@ SENSOR_TYPES = [
     ),
     LeafSpySensorDescription(
         key="VIN",
-        translation_key="vehicle_identification_number",
+        translation_key="VIN",
         value_fn=lambda data: data.get("VIN"),
         icon="mdi:identifier",
     ),
@@ -212,16 +212,16 @@ SENSOR_TYPES = [
         icon="mdi:temperature-celsius",
     ),
     LeafSpySensorDescription(
-        key="motor rpm",
-        translation_key="motor_rpm",
+        key="motor speed",
+        translation_key="motor_speed",
         native_unit_of_measurement="RPM",
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.get("RPM"),
         icon="mdi:engine",
     ),
     LeafSpySensorDescription(
-        key="battery health (SOH)",
-        translation_key="state_of_health",
+        key="battery health",
+        translation_key="battery_health",
         native_unit_of_measurement=PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.get("SOH"),
@@ -229,16 +229,16 @@ SENSOR_TYPES = [
         icon="mdi:battery-heart-variant",
     ),
     LeafSpySensorDescription(
-        key="Hx",
-        translation_key="hx_value",
-        native_unit_of_measurement=PERCENTAGE,
+        key="battery conductance",
+        translation_key="battery_conductance",
+        native_unit_of_measurement='Hx',
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.get("Hx"),
         icon="mdi:battery-heart-variant",
     ),
     LeafSpySensorDescription(
         key="speed",
-        translation_key="vehicle_speed",
+        translation_key="speed",
         native_unit_of_measurement=UnitOfSpeed.METERS_PER_SECOND,
         device_class=SensorDeviceClass.SPEED,
         state_class=SensorStateClass.MEASUREMENT,

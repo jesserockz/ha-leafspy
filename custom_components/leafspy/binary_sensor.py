@@ -28,8 +28,8 @@ class LeafSpyBinarySensorDescription(BinarySensorEntityDescription):
 
 BINARY_SENSOR_TYPES = [
     LeafSpyBinarySensorDescription(
-        key="power switch",
-        translation_key="power_switch_state",
+        key="power",
+        translation_key="power",
         device_class=BinarySensorDeviceClass.POWER,
         value_fn=lambda data: data.get("PwrSw"),
         transform_fn=lambda x: x == '1',
