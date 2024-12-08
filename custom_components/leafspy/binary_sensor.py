@@ -93,12 +93,14 @@ async def async_setup_entry(
 
     entities = []
     for dev_id in dev_ids:
-        entity = hass.data[DOMAIN]['binary_sensors'].get(dev_id)
-        if entity is None:
-            entity = LeafSpyBinarySensor(dev_id, BINARY_SENSOR_TYPES[0], False)
-            entities.append(entity)
-        async_add_entities(entities)
 
+        # For each device ID, recreate the sensor entities
+        for description in BINARY_SENSOR_TYPES:
+            sensor_id = f"{dev_id}_{description.key}"
+            sensor = LeafSpyBinarySensor(dev_id, description, False)
+            hass.data[DOMAIN]['binary_sensors'][sensor_id] = sensor
+            entities.append(sensor)
+    async_add_entities(entities)
     return True
 
 
@@ -132,6 +134,12 @@ class LeafSpyBinarySensor(BinarySensorEntity, RestoreEntity):
         return {
             "identifiers": {(DOMAIN, self._device_id)},
         }
+    
+    @property
+    def should_poll(self) -> bool:
+        """Disable polling for this sensor."""
+        return False
+
 
     def update_state(self, new_value):
         """Update the binary sensor state."""
