@@ -33,7 +33,6 @@ BINARY_SENSOR_TYPES = [
         device_class=BinarySensorDeviceClass.POWER,
         value_fn=lambda data: data.get("PwrSw"),
         transform_fn=lambda x: x == '1',
-        icon="mdi:power",
     )
 ]
 
