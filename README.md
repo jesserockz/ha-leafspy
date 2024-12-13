@@ -1,4 +1,4 @@
-# leafspy
+# LeafSpy integration for Home Assistant
 
 [![GitHub Release][releases-shield]][releases]
 [![GitHub Activity][commits-shield]][commits]
@@ -7,79 +7,45 @@
 [![hacs][hacsbadge]][hacs]
 ![Project Maintenance][maintenance-shield]
 
-[![Discord][discord-shield]][discord]
-[![Community Forum][forum-shield]][forum]
+<p align="center"><img src="leafspy.png" width="64"></p>
 
-_Component to integrate with [leafspy][leafspy]._
+This Home Assistant component integrates with the LeafSpy [Android](https://play.google.com/store/apps/details?id=com.Turbo3.Leaf_Spy_Pro&hl=en_US) and [iOS](https://apps.apple.com/us/app/leafspy-pro/id967376861). Plug a Bluetooth OBD2 adapter (like [this one](https://www.amazon.com/gp/product/B0755N61PW/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1)) into your Nissan Leaf. Open up LeafSpy and pair your phone with the adapter. It will then read information from your car. This integration will allow your phone to submit that info to Home Assistant.
 
-**This component will set up the following platforms.**
+## Installation and configuration
 
-Platform | Description
--- | --
-`device_tracker` | Track a Nissan Leaf using the Leaf Spy app. 
-`sensor` | All data about the vehicle sent from Leaf Spy is displayed as independent sensors. They won't appear in Home Assistant until data is received.
-`binary_sensor` | Power switch sensor. 
-
-![leafspy][leafspyimg]
-
-## Installation
+1. [Install HACS](https://www.hacs.xyz/docs/use/configuration/basic/).
+2. Add this to HACS as a [custom repository](https://hacs.xyz/docs/faq/custom_repositories/) by pressing this button.
 
 [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=jesserockz&repository=ha-leafspy&category=integration)
 
-1. Using the tool of choice open the directory (folder) for your HA configuration (where you find `configuration.yaml`).
-2. If you do not have a `custom_components` directory (folder) there, you need to create it.
-3. In the `custom_components` directory (folder) create a new folder called `leafspy`.
-4. Download _all_ the files from the `custom_components/leafspy/` directory (folder) in this repository.
-5. Place the files you downloaded in the new directory (folder) you created.
-6. Restart Home Assistant
-7. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Leaf Spy"
+3. Restart Home Assistant
+4. In the UI go to "Configuration" -> "Integrations" click "+" and search for "Leaf Spy"
+5. Configure your Leaf Spy app using the information that the integration displays on screen. If you don't have the app in front of you, copy down the on-screen information; the generated password will only be shown this once. If you don't copy it down, you'll have to uninstall the integration, restart, and reinstall.
 
-Using your HA configuration directory (folder) as a starting point you should now also have this:
+## Entities
+_See [LeafSpy manual](https://leafspy.com/wp-content/uploads/2024/04/LeafSpy-Help-1.5.0.pdf#page=70) for more details on the entities it sends._
 
-```text
-custom_components/leafspy/translations/en.json
-custom_components/leafspy/__init__.py
-custom_components/leafspy/config_flow.py
-custom_components/leafspy/const.py
-custom_components/leafspy/device_tracker.py
-custom_components/leafspy/sensor.py
-custom_components/leafspy/binary_sensor.py
-custom_components/leafspy/manifest.json
-custom_components/leafspy/strings.json
-```
+### Device tracker
+| Entity ID | Entity Name | Description |
+| :-- | :-: | :-- |
+| device_tracker.leaf | Leaf | Tracks latitude, longitude, GPS accuracy, and battery level |
 
-## Configuration is done in the UI
+### Binary sensor
+| Entity ID | Entity Name | Description |
+| :-- | :-: | :-- |
+| binary_sensor.leaf_power | Leaf power | Indicates whether car is turned on |
 
-### Android/iOS app configuration
+### Sensors
+| Entity ID | Entity Name | Description |
+| :-- | :-: | :-- |
+| sensor.leaf_ambient_temperature | Leaf ambient temperature | Indicates temperature outside of car |
+| sensor.leaf_battery_capacity | Leaf battery capacity | Indicates battery capacity (Ah) |
+| ... | ... | ... |
 
-Open the Leaf Spy app, go to `Menu` -> `Settings` and scroll down to `Server`. 
-Change the following settings:
-- `Enable`: Yes
-- `Send Interval` can be whatever you prefer.
-- `ID`: `<Car Name>`
-- `PW`: secret generated when the integration was installed
-- `Http` or `Https` depending on the access to your Home Assistant install.
-- `URL`: webhook url generated when the integration was installed 
-  - Note: **Do not** add http or https to the URL.
-
-<!---->
-
-## Contributions are welcome!
-
-If you want to contribute to this please read the [Contribution guidelines](CONTRIBUTING.md)
-
-***
-
-[leafspy]: https://play.google.com/store/apps/details?id=com.Turbo3.Leaf_Spy_Pro
 [commits-shield]: https://img.shields.io/github/commit-activity/y/jesserockz/ha-leafspy.svg?style=for-the-badge
 [commits]: https://github.com/jesserockz/ha-leafspy/commits/main
 [hacs]: https://github.com/custom-components/hacs
 [hacsbadge]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge
-[discord]: https://discord.gg/Qa5fW2R
-[discord-shield]: https://img.shields.io/discord/330944238910963714.svg?style=for-the-badge
-[leafspyimg]: leafspy.png
-[forum-shield]: https://img.shields.io/badge/community-forum-brightgreen.svg?style=for-the-badge
-[forum]: https://community.home-assistant.io/
 [license-shield]: https://img.shields.io/github/license/jesserockz/ha-leafspy.svg?style=for-the-badge
 [maintenance-shield]: https://img.shields.io/badge/maintainer-Will%20Adler%20%40wtadler-blue.svg?style=for-the-badge
 [releases-shield]: https://img.shields.io/github/release/jesserockz/ha-leafspy.svg?style=for-the-badge
