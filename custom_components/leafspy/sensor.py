@@ -228,9 +228,9 @@ SENSOR_TYPES = [
         icon="mdi:battery-heart-variant",
     ),
     LeafSpySensorDescription(
-        key="battery conductance",
+        key="battery conductance (Hx)",
         translation_key="battery_conductance",
-        native_unit_of_measurement='Hx',
+        native_unit_of_measurement=PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.get("Hx"),
         icon="mdi:battery-heart-variant",
