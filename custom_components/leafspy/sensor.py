@@ -5,7 +5,7 @@ from typing import Any, Callable
 
 from homeassistant.components.sensor import (
     SensorDeviceClass,
-    SensorEntity,
+    RestoreSensor,
     SensorEntityDescription,
     SensorStateClass,
 )
@@ -21,7 +21,6 @@ from homeassistant.const import (
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.helpers import device_registry
 from homeassistant.components.sensor import SensorEntityDescription
 from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
@@ -297,8 +296,8 @@ async def async_setup_entry(
                     if description.unit_fn:
                         unit = description.unit_fn(message)
                         if unit:
-                            sensor_description = replace(description, 
-                                native_unit_of_measurement=unit)
+                            sensor_description = replace(description,
+                                                         native_unit_of_measurement=unit)
 
                     if sensor is not None:
                         # Update existing sensor
@@ -345,7 +344,7 @@ async def async_setup_entry(
 
 
 
-class LeafSpySensor(SensorEntity, RestoreEntity):
+class LeafSpySensor(RestoreSensor):
     """Representation of a Leaf Spy sensor."""
 
     def __init__(self, device_id: str, description: LeafSpySensorDescription, initial_value):
@@ -390,18 +389,16 @@ class LeafSpySensor(SensorEntity, RestoreEntity):
         """Restore last known state."""
         await super().async_added_to_hass()
 
-        # Add this log line to confirm the method is being called
         _LOGGER.debug(f"async_added_to_hass called for {self.name}")
 
         # Retrieve the last known state
-        last_state = await self.async_get_last_state()
+        last_state = await self.async_get_last_sensor_data()
         if last_state:
             # Log the restored state before transforming
-            _LOGGER.debug(f"Restored state for {self.name}: {last_state.state}")
+            _LOGGER.debug(f"Restored state for {self.name}: {last_state.native_value}")
 
             try:
-                transform_fn = self.entity_description.transform_fn
-                self._value = transform_fn(last_state.state)
+                self._value = last_state.native_value
                 self.async_write_ha_state()  # Make sure the restored state is written
             except (ValueError, TypeError):
                 _LOGGER.warning(f"Could not restore state for {self.name}")
