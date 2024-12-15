@@ -24,15 +24,13 @@ _LOGGER = logging.getLogger(__name__)
 class LeafSpyBinarySensorDescription(BinarySensorEntityDescription):
     """Describes Leaf Spy binary sensor."""
     value_fn: Callable[[dict], Any] = field(default=lambda data: None)
-    transform_fn: Callable[[Any], bool] = field(default=lambda x: bool(x))
 
 BINARY_SENSOR_TYPES = [
     LeafSpyBinarySensorDescription(
         key="power",
         translation_key="power",
         device_class=BinarySensorDeviceClass.POWER,
-        value_fn=lambda data: data.get("PwrSw"),
-        transform_fn=lambda x: x == '1',
+        value_fn=lambda data: data.get("PwrSw") == '1',
         icon="mdi:power",
     )
 ]
@@ -61,9 +59,6 @@ async def async_setup_entry(
                 sensor_id = f"{dev_id}_{description.key}"
                 value = description.value_fn(message)
                 _LOGGER.debug("Binary Sensor '%s': Raw data=%s, Parsed value=%s", description.key, message, value)
-
-                value = description.transform_fn(value)
-                _LOGGER.debug("Binary Sensor '%s': Transformed value=%s", description.key, value)
 
                 if value is not None:
                     sensor = hass.data[DOMAIN]['binary_sensors'].get(sensor_id)
@@ -153,8 +148,7 @@ class LeafSpyBinarySensor(BinarySensorEntity, RestoreEntity):
         last_state = await self.async_get_last_state()
         if last_state:
             try:
-                transform_fn = self.entity_description.transform_fn
-                self._value = transform_fn(last_state.state)
+                self._value = last_state.state
             except (ValueError, TypeError):
                 _LOGGER.warning(f"Could not restore state for {self.name}")
         
