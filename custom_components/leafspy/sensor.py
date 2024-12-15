@@ -34,15 +34,16 @@ _LOGGER = logging.getLogger(__name__)
 class LeafSpySensorDescription(SensorEntityDescription):
     """Describes Leaf Spy sensor."""
     value_fn: Callable[[dict], Any] = field(default=lambda data: None)
-    transform_fn: Callable[[Any], Any] = field(default=lambda x: x)
-    unit_fn: Callable[[dict], str] = field(default=lambda data: None)
 
-def _get_temperature_unit(data):
-    """Determine the temperature unit based on Tunits."""
-    tunits = data.get("Tunits", "").lower()
-    if tunits == "f":
-        return UnitOfTemperature.FAHRENHEIT
-    return UnitOfTemperature.CELSIUS
+def _safe_round(x, digits=2):
+    try:
+        if digits==0:
+            return int(float(x))
+        else:
+            return round(float(x), digits)
+    except (ValueError, TypeError):
+        return None
+
 
 SENSOR_TYPES = [
     LeafSpySensorDescription(
@@ -67,8 +68,7 @@ SENSOR_TYPES = [
         native_unit_of_measurement=UnitOfLength.METERS,
         device_class=SensorDeviceClass.DISTANCE,
         state_class=SensorStateClass.MEASUREMENT,
-        value_fn=lambda data: data.get("Elv"),
-        transform_fn=lambda x: int(round(float(x), 0)) if x is not None else None,
+        value_fn=lambda data: _safe_round(data.get("Elv"), 2),
         icon="mdi:elevation-rise",
     ),
     LeafSpySensorDescription(
@@ -89,8 +89,7 @@ SENSOR_TYPES = [
         native_unit_of_measurement=UnitOfLength.KILOMETERS,
         device_class=SensorDeviceClass.DISTANCE,
         state_class=SensorStateClass.TOTAL_INCREASING,
-        value_fn=lambda data: data.get("Odo"),
-        transform_fn=lambda x: int(float(x)) if x is not None else None,
+        value_fn=lambda data: _safe_round(data.get("Odo"), 0),
         icon="mdi:counter",
     ),
     LeafSpySensorDescription(
@@ -100,14 +99,12 @@ SENSOR_TYPES = [
         device_class=SensorDeviceClass.BATTERY,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.get("SOC"),
-        transform_fn=lambda x: int(round(float(x), 0)) if x is not None else None,
     ),
     LeafSpySensorDescription(
         key="battery capacity",
         translation_key="battery_capacity",
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.get("AHr"),
-        transform_fn=lambda x: float(x) if x is not None else None,
         native_unit_of_measurement="Ah",
         icon="mdi:battery-heart-variant",
     ),
@@ -118,8 +115,6 @@ SENSOR_TYPES = [
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.get("BatTemp"),
-        transform_fn=lambda x: float(x) if x is not None else None,
-        unit_fn=_get_temperature_unit,
         icon="mdi:thermometer",
     ),
     LeafSpySensorDescription(
@@ -129,8 +124,6 @@ SENSOR_TYPES = [
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.get("Amb"),
-        transform_fn=lambda x: float(x) if x is not None else None,
-        unit_fn=_get_temperature_unit,
         icon="mdi:sun-thermometer",
     ),
     LeafSpySensorDescription(
@@ -205,12 +198,6 @@ SENSOR_TYPES = [
         icon="mdi:identifier",
     ),
     LeafSpySensorDescription(
-        key="temperature units",
-        translation_key="temperature_units",
-        value_fn=lambda data: data.get("Tunits"),
-        icon="mdi:temperature-celsius",
-    ),
-    LeafSpySensorDescription(
         key="motor speed",
         translation_key="motor_speed",
         native_unit_of_measurement="RPM",
@@ -224,11 +211,10 @@ SENSOR_TYPES = [
         native_unit_of_measurement=PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.get("SOH"),
-        transform_fn=lambda x: float(x) if x is not None else None,
         icon="mdi:battery-heart-variant",
     ),
     LeafSpySensorDescription(
-        key="battery conductance (Hx)",
+        key="battery conductance",
         translation_key="battery_conductance",
         native_unit_of_measurement=PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
@@ -285,19 +271,10 @@ async def async_setup_entry(
                 value = description.value_fn(message)
                 _LOGGER.debug("Sensor '%s': Raw data=%s, Parsed value=%s", description.key, message, value)
 
-                value = description.transform_fn(value)
-                _LOGGER.debug("Sensor '%s': Transformed value=%s", description.key, value)
-
                 if value is not None:
                     sensor = hass.data[DOMAIN]['sensors'].get(sensor_id)
                     
-                    # Dynamically update temperature unit if applicable
                     sensor_description = description
-                    if description.unit_fn:
-                        unit = description.unit_fn(message)
-                        if unit:
-                            sensor_description = replace(description,
-                                                         native_unit_of_measurement=unit)
 
                     if sensor is not None:
                         # Update existing sensor
