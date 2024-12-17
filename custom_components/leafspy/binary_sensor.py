@@ -127,6 +127,7 @@ class LeafSpyBinarySensor(BinarySensorEntity, RestoreEntity):
     def device_info(self):
         """Return device information."""
         return {
+            "name": "Leaf",
             "identifiers": {(DOMAIN, self._device_id)},
         }
     
