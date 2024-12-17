@@ -75,6 +75,11 @@ class LeafSpyEntity(TrackerEntity, RestoreEntity):
     def battery_level(self):
         """Return the battery level of the car."""
         return self._data.get('battery_level')
+        
+    @property
+    def icon(self):
+        """Return the icon for the device."""
+        return 'mdi:car'
 
     @property
     def latitude(self):
@@ -105,7 +110,7 @@ class LeafSpyEntity(TrackerEntity, RestoreEntity):
     def device_info(self):
         """Return the device info."""
         return {
-            'name': self.name,
+            'name': 'Leaf',
             'identifiers': {(LS_DOMAIN, self._dev_id)},
         }
 
