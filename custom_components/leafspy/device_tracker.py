@@ -64,8 +64,6 @@ class LeafSpyDeviceTracker(TrackerEntity, RestoreEntity):
         """Set up LeafSpy entity."""
         self._dev_id = dev_id
         self._data = data or {}
-        # self.entity_id = f"{LS_DOMAIN}.{dev_id}"
-        self.entity_id = f"{LS_DOMAIN}.leaf"
 
     @property
     def unique_id(self):
@@ -95,7 +93,7 @@ class LeafSpyDeviceTracker(TrackerEntity, RestoreEntity):
     @property
     def name(self):
         """Return the name of the car."""
-        return self._data.get('device_name')
+        return 'Leaf'
 
     @property
     def should_poll(self):
@@ -148,7 +146,6 @@ def _parse_see_args(message):
     dev_id = slugify('leaf_{}'.format(message['VIN']))
     args = {
         'dev_id': dev_id,
-        'device_name': message['user'],
         'latitude': float(message['Lat']),
         'longitude': float(message['Long']),
         'battery_level': float(message['SOC'])
