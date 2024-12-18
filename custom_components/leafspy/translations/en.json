@@ -4,12 +4,79 @@
       "one_instance_allowed": "You may have only one instance of Leaf Spy installed, and you appear to have installed one already."
     },
     "create_entry": {
-      "default": "Open the LeafSpy app, go to `'Menu'` -> `'Settings'`.\n - Set `'Units'` to `'°C'`.\n - Enable `'Convert Outside Temperatures'`.\n - Scroll down to the `'Server'` section. Change the following settings:\n - `'Enable'`: Yes\n - `'Send Interval'` can be whatever you prefer.\n - `'ID'`: `'(Car Name)'`\n - `'PW'`: {secret}\n - `'Http'` or `'Https'` depending on the access to your Home Assistant install.\n - `'URL'`: {url} - Note: **Do not** add http or https to the URL."
+      "default": "Open the LeafSpy app, go to `'Menu'` -> `'Settings'`.\n - Set `'Units'` to `'°C'`.\n - Enable `'Convert Outside Temperatures'`.\n - Scroll down to the `'Server'` section. Change the following settings:\n - `'Enable'`: On\n - `'Send Interval'`: Whatever frequency you prefer.\n - `'ID'`: Whatever name you prefer for the `device_tracker` entity. `'Leaf'` is fine.'`\n - `'PW'`: {secret}\n - `'Http://'` or `'Https://'`: Depends on your Home Assistant installation.\n - `'URL'`: {url}\n   - _(**Do not** include the http or https prefix in the URL field.)_"
     },
     "step": {
       "user": {
-        "description": "Are you sure you want to set up Leaf Spy?",
-        "title": "Set up Leaf Spy"
+        "description": "Are you sure you want to set up LeafSpy?",
+        "title": "Set up LeafSpy"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "DevBat": {
+        "name": "Phone battery"
+      },
+      "Gids": {
+        "name": "Battery state of charge (Gids)"
+      },
+      "Elv": {
+        "name": "Elevation"
+      },
+      "Seq": {
+        "name": "Sequence number"
+      },
+      "Trip": {
+        "name": "Trip number"
+      },
+      "Odo": {
+        "name": "Odometer"
+      },
+      "SOC": {
+        "name": "Battery state of charge"
+      },
+      "Ahr": {
+        "name": "Battery capacity"
+      },
+      "BatTemp": {
+        "name": "Battery temperature"
+      },
+      "Amb": {
+        "name": "Ambient temperature"
+      },
+      "ChrgPwr": {
+        "name": "Charge power"
+      },
+      "Wpr": {
+        "name": "Front wiper status"
+      },
+      "PlugState": {
+        "name": "Plug state"
+      },
+      "ChrgMode": {
+        "name": "Charge mode"
+      },
+      "VIN": {
+        "name": "VIN"
+      },
+      "RPM": {
+        "name": "Motor speed"
+      },
+      "SOH": {
+        "name": "Battery health"
+      },
+      "Hx": {
+        "name": "Battery conductance"
+      },
+      "Speed": {
+        "name": "Speed"
+      },
+      "BatVolts": {
+        "name": "Battery voltage"
+      },
+      "BatAmps": {
+        "name": "Battery current"
       }
     }
   }

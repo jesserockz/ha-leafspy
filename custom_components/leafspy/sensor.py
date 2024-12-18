@@ -47,16 +47,16 @@ def _safe_round(x, digits=2):
 
 SENSOR_TYPES = [
     LeafSpySensorDescription(
-        key="phone battery",
-        translation_key="phone_battery",
+        key="phone_battery",
+        translation_key="DevBat",
         native_unit_of_measurement=PERCENTAGE,
         device_class=SensorDeviceClass.BATTERY,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.get("DevBat"),
     ),
     LeafSpySensorDescription(
-        key="battery gids",
-        translation_key="battery_gids",
+        key="battery_gids",
+        translation_key="Gids",
         native_unit_of_measurement="Gids",
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.get("Gids"),
@@ -64,7 +64,7 @@ SENSOR_TYPES = [
     ),
     LeafSpySensorDescription(
         key="elevation",
-        translation_key="elevation",
+        translation_key="Elv",
         native_unit_of_measurement=UnitOfLength.METERS,
         device_class=SensorDeviceClass.DISTANCE,
         state_class=SensorStateClass.MEASUREMENT,
@@ -72,20 +72,20 @@ SENSOR_TYPES = [
         icon="mdi:elevation-rise",
     ),
     LeafSpySensorDescription(
-        key="sequence number",
-        translation_key="sequence_number",
+        key="sequence_number",
+        translation_key="Seq",
         value_fn=lambda data: data.get("Seq"),
         icon="mdi:numeric",
     ),
     LeafSpySensorDescription(
-        key="trip number",
-        translation_key="trip_number",
+        key="trip_number",
+        translation_key="Trip",
         value_fn=lambda data: data.get("Trip"),
         icon="mdi:road-variant",
     ),
     LeafSpySensorDescription(
         key="odometer",
-        translation_key="odometer",
+        translation_key="Odo",
         native_unit_of_measurement=UnitOfLength.KILOMETERS,
         device_class=SensorDeviceClass.DISTANCE,
         state_class=SensorStateClass.TOTAL_INCREASING,
@@ -93,24 +93,24 @@ SENSOR_TYPES = [
         icon="mdi:counter",
     ),
     LeafSpySensorDescription(
-        key="battery state of charge",
-        translation_key="state_of_charge",
+        key="battery_state_of_charge",
+        translation_key="SOC",
         native_unit_of_measurement=PERCENTAGE,
         device_class=SensorDeviceClass.BATTERY,
         state_class=SensorStateClass.MEASUREMENT,
-        value_fn=lambda data: data.get("SOC"),
+        value_fn=lambda data: _safe_round(data.get("SOC"), 2),
     ),
     LeafSpySensorDescription(
-        key="battery capacity",
-        translation_key="battery_capacity",
+        key="battery_capacity",
+        translation_key="Ahr",
         state_class=SensorStateClass.MEASUREMENT,
-        value_fn=lambda data: data.get("AHr"),
+        value_fn=lambda data: _safe_round(data.get("Ahr"), 2),
         native_unit_of_measurement="Ah",
         icon="mdi:battery-heart-variant",
     ),
     LeafSpySensorDescription(
-        key="battery temperature",
-        translation_key="battery_temperature",
+        key="battery_temperature",
+        translation_key="BatTemp",
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
@@ -118,8 +118,8 @@ SENSOR_TYPES = [
         icon="mdi:thermometer",
     ),
     LeafSpySensorDescription(
-        key="ambient temperature",
-        translation_key="ambient_temperature",
+        key="ambient_temperature",
+        translation_key="Amb",
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
@@ -127,16 +127,16 @@ SENSOR_TYPES = [
         icon="mdi:sun-thermometer",
     ),
     LeafSpySensorDescription(
-        key="charge power",
-        translation_key="charge_power",
+        key="charge_power",
+        translation_key="ChrgPwr",
         native_unit_of_measurement=UnitOfPower.WATT,
         device_class=SensorDeviceClass.POWER,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.get("ChrgPwr"),
     ),
     LeafSpySensorDescription(
-        key="front wiper",
-        translation_key="front_wiper",
+        key="front_wiper",
+        translation_key="Wpr",
         device_class=SensorDeviceClass.ENUM,
         value_fn=lambda data: {
             80: "High",
@@ -156,8 +156,8 @@ SENSOR_TYPES = [
         ]
     ),
     LeafSpySensorDescription(
-        key="plug",
-        translation_key="plug",
+        key="plug_state",
+        translation_key="PlugState",
         device_class=SensorDeviceClass.ENUM,
         value_fn=lambda data: {
             0: "Not plugged",
@@ -173,8 +173,8 @@ SENSOR_TYPES = [
         ]
     ),
     LeafSpySensorDescription(
-        key="charge mode",
-        translation_key="charge_mode",
+        key="charge_mode",
+        translation_key="ChrgMode",
         device_class=SensorDeviceClass.ENUM,
         value_fn=lambda data: {
             0: "Not charging",
@@ -182,7 +182,7 @@ SENSOR_TYPES = [
             2: "Level 2 charging",
             3: "Level 3 quick charging"
         }.get(int(data.get("ChrgMode")), "unknown"),
-        icon="mdi:battery-charging-wireless",
+        icon="mdi:ev-station",
         options=[
             "Not charging",
             "Level 1 charging",
@@ -198,24 +198,24 @@ SENSOR_TYPES = [
         icon="mdi:identifier",
     ),
     LeafSpySensorDescription(
-        key="motor speed",
-        translation_key="motor_speed",
+        key="motor_speed",
+        translation_key="RPM",
         native_unit_of_measurement="RPM",
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.get("RPM"),
         icon="mdi:engine",
     ),
     LeafSpySensorDescription(
-        key="battery health",
-        translation_key="battery_health",
+        key="battery_health",
+        translation_key="SOH",
         native_unit_of_measurement=PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.get("SOH"),
         icon="mdi:battery-heart-variant",
     ),
     LeafSpySensorDescription(
-        key="battery conductance",
-        translation_key="battery_conductance",
+        key="battery_conductance",
+        translation_key="Hx",
         native_unit_of_measurement=PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.get("Hx"),
@@ -223,23 +223,23 @@ SENSOR_TYPES = [
     ),
     LeafSpySensorDescription(
         key="speed",
-        translation_key="speed",
+        translation_key="Speed",
         native_unit_of_measurement=UnitOfSpeed.METERS_PER_SECOND,
         device_class=SensorDeviceClass.SPEED,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.get("Speed"),
     ),
     LeafSpySensorDescription(
-        key="battery voltage",
-        translation_key="battery_voltage",
+        key="battery_voltage",
+        translation_key="BatVolts",
         native_unit_of_measurement=UnitOfElectricPotential.VOLT,
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
-        value_fn=lambda data: data.get("BatVolts"),
+        value_fn=lambda data: _safe_round(data.get("BatVolts"), 2),
     ),
     LeafSpySensorDescription(
-        key="battery current",
-        translation_key="battery_current",
+        key="battery_current",
+        translation_key="BatAmps",
         native_unit_of_measurement=UnitOfElectricCurrent.AMPERE,
         device_class=SensorDeviceClass.CURRENT,
         state_class=SensorStateClass.MEASUREMENT,
@@ -328,6 +328,7 @@ class LeafSpySensor(RestoreSensor):
         """Initialize the sensor."""
         self._device_id = device_id
         self._value = initial_value
+        self._attr_has_entity_name = True
         self.entity_description = description
 
     @property
@@ -335,11 +336,12 @@ class LeafSpySensor(RestoreSensor):
         """Return a unique ID."""
         return f"{self._device_id}_{self.entity_description.key}"
 
-    @property
-    def name(self):
-        """Return the name of the sensor."""
-        return f"Leaf {self.entity_description.key}"
 
+    @property
+    def translation_key(self):
+        """Return the translation key."""
+        return self.entity_description.translation_key
+    
     @property
     def native_value(self):
         """Return the sensor's value."""
