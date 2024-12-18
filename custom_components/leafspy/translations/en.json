@@ -13,6 +13,11 @@
     }
   },
   "entity": {
+    "binary_sensor": {
+      "PwrSw": {
+        "name": "Power"
+      }
+    },
     "sensor": {
       "DevBat": {
         "name": "Phone battery"

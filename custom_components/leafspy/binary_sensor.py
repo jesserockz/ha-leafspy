@@ -23,14 +23,14 @@ _LOGGER = logging.getLogger(__name__)
 @dataclass(frozen=True)
 class LeafSpyBinarySensorDescription(BinarySensorEntityDescription):
     """Describes Leaf Spy binary sensor."""
-    value_fn: Callable[[dict], Any] = field(default=lambda data: None)
+    transform_fn: Callable[[dict], Any] = field(default=lambda x: x)
 
 BINARY_SENSOR_TYPES = [
     LeafSpyBinarySensorDescription(
         key="power",
-        translation_key="power",
+        translation_key="PwrSw",
         device_class=BinarySensorDeviceClass.POWER,
-        value_fn=lambda data: data.get("PwrSw") == '1',
+        transform_fn=lambda x: x == '1',
         icon="mdi:power",
     )
 ]
@@ -57,17 +57,28 @@ async def async_setup_entry(
             # Create and update binary sensors for each description
             for description in BINARY_SENSOR_TYPES:
                 sensor_id = f"{dev_id}_{description.key}"
-                value = description.value_fn(message)
-                _LOGGER.debug("Binary Sensor '%s': Raw data=%s, Parsed value=%s", description.key, message, value)
+                # value = description.value_fn(message)
+                value = message.get(description.translation_key, None)
+                _LOGGER.debug(f"Binary sensor {description.key}: Initial value={value}")
+
+                if description.transform_fn:
+                    value = description.transform_fn(value)
+                    _LOGGER.debug(f"Binary sensor {description.key}: Transformed value={value}")
 
                 if value is not None:
                     sensor = hass.data[DOMAIN]['binary_sensors'].get(sensor_id)
+
+                    sensor_description = description
+
                     if sensor is not None:
+                        sensor.entity_description = sensor_description
                         sensor.update_state(value)
                     else:
                         sensor = LeafSpyBinarySensor(dev_id, description, value)
                         hass.data[DOMAIN]['binary_sensors'][sensor_id] = sensor
                         async_add_entities([sensor])
+
+                        _LOGGER.debug(f"Registered sensor: {sensor.name} with initial value: {value}")
 
         except Exception as err:
             _LOGGER.error("Error processing Leaf Spy message: %s", err)
@@ -106,17 +117,13 @@ class LeafSpyBinarySensor(BinarySensorEntity, RestoreEntity):
         """Initialize the binary sensor."""
         self._device_id = device_id
         self._value = initial_value
+        self._attr_has_entity_name = True
         self.entity_description = description
 
     @property
     def unique_id(self):
         """Return a unique ID."""
         return f"{self._device_id}_{self.entity_description.key}"
-
-    @property
-    def name(self):
-        """Return the name of the binary sensor."""
-        return f"Leaf {self.entity_description.key}"
 
     @property
     def is_on(self):
