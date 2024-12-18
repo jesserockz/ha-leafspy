@@ -95,7 +95,7 @@ SENSOR_TYPES = [
         native_unit_of_measurement=UnitOfLength.KILOMETERS,
         device_class=SensorDeviceClass.DISTANCE,
         state_class=SensorStateClass.TOTAL_INCREASING,
-        transform_fn=lambda x: _safe_round(x, 0),
+        transform_fn=lambda x: _safe_round(x, 1),
         icon="mdi:counter",
     ),
     LeafSpySensorDescription(
@@ -268,7 +268,7 @@ async def async_setup_entry(
             for description in SENSOR_TYPES:
                 sensor_id = f"{dev_id}_{description.key}"
                 value = message.get(description.translation_key, None)
-                # value = description.value_fn(message)
+
                 _LOGGER.debug(f"Sensor {description.key}: Initial value={value}")
 
                 if description.transform_fn:

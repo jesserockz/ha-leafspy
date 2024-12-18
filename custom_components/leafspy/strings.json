@@ -41,7 +41,7 @@
       "SOC": {
         "name": "Battery state of charge"
       },
-      "Ahr": {
+      "AHr": {
         "name": "Battery capacity"
       },
       "BatTemp": {
@@ -57,7 +57,7 @@
         "name": "Front wiper status"
       },
       "PlugState": {
-        "name": "Plug state"
+        "name": "Plug status"
       },
       "ChrgMode": {
         "name": "Charge mode"
@@ -72,7 +72,7 @@
         "name": "Battery health"
       },
       "Hx": {
-        "name": "Battery conductance"
+        "name": "Battery conductance (Hx)"
       },
       "Speed": {
         "name": "Speed"

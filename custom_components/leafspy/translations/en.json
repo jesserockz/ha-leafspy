@@ -7,8 +7,8 @@
       "default": "Open the LeafSpy app, go to `'Menu'` -> `'Settings'`.\n - In the **Units** section:\n   - Choose `°C`.\n   - Enable `Convert Outside Temperature`.\n - In the **Server** section:\n   - `Enable`: `On`\n   - `Send Interval`: Whatever frequency you prefer.\n   - `PW`: `{secret}`\n   - `Http://` or `Https://`: Depends on your Home Assistant installation.\n   - `URL`: `{url}`\n     - _(**Do not** include the http or https prefix in the URL field.)_"    },
     "step": {
       "user": {
-        "description": "Are you sure you want to set up LeafSpy?",
-        "title": "Set up LeafSpy"
+        "description": "Are you sure you want to set up Leaf Spy?",
+        "title": "Set up Leaf Spy"
       }
     }
   },
@@ -40,7 +40,7 @@
       "SOC": {
         "name": "Battery state of charge"
       },
-      "Ahr": {
+      "AHr": {
         "name": "Battery capacity"
       },
       "BatTemp": {
@@ -56,7 +56,7 @@
         "name": "Front wiper status"
       },
       "PlugState": {
-        "name": "Plug state"
+        "name": "Plug status"
       },
       "ChrgMode": {
         "name": "Charge mode"
@@ -71,7 +71,7 @@
         "name": "Battery health"
       },
       "Hx": {
-        "name": "Battery conductance"
+        "name": "Battery conductance (Hx)"
       },
       "Speed": {
         "name": "Speed"
