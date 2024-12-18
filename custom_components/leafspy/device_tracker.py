@@ -28,7 +28,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
             entity.update_data(data)
             return
 
-        entity = hass.data[LS_DOMAIN]['devices'][dev_id] = LeafSpyEntity(
+        entity = hass.data[LS_DOMAIN]['devices'][dev_id] = LeafSpyDeviceTracker(
             dev_id, data
         )
         async_add_entities([entity])
@@ -49,7 +49,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
     entities = []
     for dev_id in dev_ids:
-        entity = hass.data[LS_DOMAIN]['devices'][dev_id] = LeafSpyEntity(
+        entity = hass.data[LS_DOMAIN]['devices'][dev_id] = LeafSpyDeviceTracker(
             dev_id
         )
         entities.append(entity)
@@ -57,14 +57,15 @@ async def async_setup_entry(hass, entry, async_add_entities):
     async_add_entities(entities)
 
 
-class LeafSpyEntity(TrackerEntity, RestoreEntity):
+class LeafSpyDeviceTracker(TrackerEntity, RestoreEntity):
     """Represent a tracked car."""
 
     def __init__(self, dev_id, data=None):
         """Set up LeafSpy entity."""
         self._dev_id = dev_id
         self._data = data or {}
-        self.entity_id = f"{LS_DOMAIN}.{dev_id}"
+        # self.entity_id = f"{LS_DOMAIN}.{dev_id}"
+        self.entity_id = f"{LS_DOMAIN}.leaf"
 
     @property
     def unique_id(self):
