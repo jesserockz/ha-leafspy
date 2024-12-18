@@ -154,11 +154,13 @@ class LeafSpyBinarySensor(BinarySensorEntity, RestoreEntity):
         await super().async_added_to_hass()
         
         last_state = await self.async_get_last_state()
-        if last_state:
-            try:
-                self._value = last_state.state
-            except (ValueError, TypeError):
-                _LOGGER.warning(f"Could not restore state for {self.name}")
+        _LOGGER.debug(f"Last_state: {last_state}")
+
+        # if last_state:
+        #     try:
+        #         self._value = last_state.state
+        #     except (ValueError, TypeError):
+        #         _LOGGER.warning(f"Could not restore state for {self.name}")
         
         # Add this log line to confirm the method is being called
         _LOGGER.debug(f"async_added_to_hass called for {self.name}")
