@@ -43,6 +43,14 @@ def _safe_round(x, digits=2):
             return round(float(x), digits)
     except (ValueError, TypeError):
         return None
+    
+def _transform_hx(x):
+    # if x > 100, divide by 102.4, otherwise return
+    # takes care of iOS LeafSpy bug until patched
+    if x > 100:
+        return x / 102.4
+    else:
+        return x
 
 
 SENSOR_TYPES = [
@@ -218,7 +226,7 @@ SENSOR_TYPES = [
         translation_key="Hx",
         native_unit_of_measurement=PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
-        value_fn=lambda data: data.get("Hx"),
+        value_fn=lambda data: _safe_round(_transform_hx(data.get("Hx")), 2),
         icon="mdi:battery-heart-variant",
     ),
     LeafSpySensorDescription(
