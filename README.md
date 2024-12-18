@@ -25,7 +25,7 @@ Plug a Bluetooth OBD2 adapter (like [this one](https://www.amazon.com/gp/product
 
 [![Open your Home Assistant instance and start setting up a new integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=leafspy)
   
-5. Configure your Leaf Spy app settings using the information that the integration displays on screen. If you don't have the app in front of you, copy down the on-screen information; the generated password will only be shown this once. If you don't copy it down, you'll have to uninstall the integration, restart, and reinstall.
+5. Configure your Leaf Spy app settings using the information that the integration displays on screen. If you don't have the app in front of you, copy down the password. The generated password will only be shown this once; if you don't copy it down, you'll have to uninstall the integration, restart, and reinstall.
 
 ## Entities
 _See [LeafSpy manual](https://leafspy.com/wp-content/uploads/2024/04/LeafSpy-Help-1.5.0.pdf#page=70) for more details on the data that the app sends._
@@ -43,27 +43,27 @@ _See [LeafSpy manual](https://leafspy.com/wp-content/uploads/2024/04/LeafSpy-Hel
 ### Sensors
 | Entity ID | Unit reported by LeafSpy | Note |
 | :-- | :-- | :-- |
-| sensor.leaf_ambient_temperature | °C (You must set this in the LeafSpy app) | Unit adjustable in HA UI |
+| sensor.leaf_ambient_temperature | °C (You must set this in the LeafSpy app) | Unit adjustable in HA UI. |
 | sensor.leaf_battery_capacity | Ah | |
-| sensor.leaf_battery_conductance | % | Referred to as Hx in the LeafSpy manual |
+| sensor.leaf_battery_conductance | % | Referred to as Hx in the LeafSpy manual. |
 | sensor.leaf_battery_current | A | |
-| sensor.leaf_battery_gids |  Gids | |
 | sensor.leaf_battery_health | % | | 
 | sensor.leaf_battery_state_of_charge | % | |
-| sensor.leaf_battery_temperature | °C (You must set this in the LeafSpy app) | Unit adjustable in HA UI |
+| sensor.leaf_battery_stat_of_charge_gids |  Gids | |
+| sensor.leaf_battery_temperature | °C (You must set this in the LeafSpy app) | Unit adjustable in HA UI. |
 | sensor.leaf_battery_voltage | V | |
 | sensor.leaf_charge_mode | --- | |
 | sensor.leaf_charge_power | W | Not very accurate. For example, when charging via level 2 charging, it just guesses 6,000 W. |
 | sensor.leaf_elevation | m | Unit adjustable in HA UI |
-| sensor.leaf_front_wiper | --- | Not known if Leaf Spy reports this. File an issue if you see info here. |
+| sensor.leaf_front_wiper_status | --- | To get this information you may need to make a custom screen in LeafSpy to read wiper status. |
 | sensor.leaf_motor_speed | RPM | |
-| sensor.leaf_odometer | km | You must indicate in LeafSpy whether your car reports in km or mi. Unit adjustable in HA UI |
+| sensor.leaf_odometer | km | You must indicate _in LeafSpy_ whether your car reports in km or mi. Unit later adjustable in HA UI. |
 | sensor.leaf_phone_battery | % | |
-| sensor.leaf_plug | --- | Reports "Not plugged", "Partial Plugged", or "Plugged" |
-| sensor.leaf_sequence_number | --- | A number that increments with each report from Leaf Spy |
-| sensor.leaf_speed | km/h | Unit adjustable in HA UI |
-| sensor.leaf_trip_number | --- | Tracks total number of trips taken |
-| sensor.leaf_vin | ---  | Car unique identifier | 
+| sensor.leaf_plug_status | --- | Reports "Not plugged", "Partial Plugged", or "Plugged." |
+| sensor.leaf_sequence_number | --- | A number that increments with each report from Leaf Spy. |
+| sensor.leaf_speed | km/h | Unit adjustable in HA UI. |
+| sensor.leaf_trip_number | --- | Tracks total number of trips taken. |
+| sensor.leaf_vin | ---  | Car unique identifier. | 
 
 
 [commits-shield]: https://img.shields.io/github/commit-activity/y/jesserockz/ha-leafspy.svg?style=for-the-badge
