@@ -43,21 +43,21 @@ _See [LeafSpy manual](https://leafspy.com/wp-content/uploads/2024/04/LeafSpy-Hel
 ### Sensors
 | Entity ID | Unit reported by LeafSpy | Note |
 | :-- | :-- | :-- |
-| sensor.leaf_ambient_temperature | °C (You must set this in the LeafSpy app) | Unit adjustable in HA UI. |
+| sensor.leaf_ambient_temperature | °C (You must set this in the LeafSpy app; see setup instructions.) | Unit adjustable in HA UI. |
 | sensor.leaf_battery_capacity | Ah | |
 | sensor.leaf_battery_conductance | % | Referred to as Hx in the LeafSpy manual. |
 | sensor.leaf_battery_current | A | |
 | sensor.leaf_battery_health | % | | 
 | sensor.leaf_battery_state_of_charge | % | |
 | sensor.leaf_battery_stat_of_charge_gids |  Gids | |
-| sensor.leaf_battery_temperature | °C (You must set this in the LeafSpy app) | Unit adjustable in HA UI. |
+| sensor.leaf_battery_temperature | °C (You must set this in the LeafSpy app; see setup instructions.) | Unit adjustable in HA UI. |
 | sensor.leaf_battery_voltage | V | |
 | sensor.leaf_charge_mode | --- | |
 | sensor.leaf_charge_power | W | Not very accurate. For example, when charging via level 2 charging, it just guesses 6,000 W. |
 | sensor.leaf_elevation | m | Unit adjustable in HA UI |
 | sensor.leaf_front_wiper_status | --- | To get this information you may need to make a custom screen in LeafSpy to read wiper status. |
 | sensor.leaf_motor_speed | RPM | |
-| sensor.leaf_odometer | km | You must indicate _in LeafSpy_ whether your car reports in km or mi. Unit later adjustable in HA UI. |
+| sensor.leaf_odometer | km (You must indicate in LeafSpy whether your car reports in km or mi; see setup instructions.) | Unit later adjustable in HA UI. |
 | sensor.leaf_phone_battery | % | |
 | sensor.leaf_plug_status | --- | Reports "Not plugged", "Partial Plugged", or "Plugged." |
 | sensor.leaf_sequence_number | --- | A number that increments with each report from Leaf Spy. |
