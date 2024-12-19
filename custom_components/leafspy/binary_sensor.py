@@ -24,11 +24,12 @@ _LOGGER = logging.getLogger(__name__)
 class LeafSpyBinarySensorDescription(BinarySensorEntityDescription):
     """Describes Leaf Spy binary sensor."""
     transform_fn: Callable[[dict], Any] = field(default=lambda x: x)
+    leafspy_key: str = field(default=None)
 
 BINARY_SENSOR_TYPES = [
     LeafSpyBinarySensorDescription(
         key="power",
-        translation_key="PwrSw",
+        leafspy_key="PwrSw",
         device_class=BinarySensorDeviceClass.POWER,
         transform_fn=lambda x: x == '1',
         icon="mdi:power",
@@ -58,7 +59,7 @@ async def async_setup_entry(
             for description in BINARY_SENSOR_TYPES:
                 sensor_id = f"{dev_id}_{description.key}"
                 # value = description.value_fn(message)
-                value = message.get(description.translation_key, None)
+                value = message.get(description.leafspy_key, None)
                 _LOGGER.debug(f"Binary sensor {description.key}: Initial value={value}")
 
                 if description.transform_fn:
@@ -124,6 +125,11 @@ class LeafSpyBinarySensor(BinarySensorEntity, RestoreEntity):
     def unique_id(self):
         """Return a unique ID."""
         return f"{self._device_id}_{self.entity_description.key}"
+
+    @property
+    def translation_key(self):
+        """Return the translation key."""
+        return self.entity_description.key
 
     @property
     def is_on(self):

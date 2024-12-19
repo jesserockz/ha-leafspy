@@ -15,72 +15,72 @@
   },
   "entity": {
     "binary_sensor": {
-      "PwrSw": {
+      "power": {
         "name": "Power"
       }
     },
     "sensor": {
-      "DevBat": {
+      "phone_battery": {
         "name": "Phone battery"
       },
-      "Gids": {
+      "battery_gids": {
         "name": "Battery state of charge (Gids)"
       },
-      "Elv": {
+      "elevation": {
         "name": "Elevation"
       },
-      "Seq": {
+      "sequence_number": {
         "name": "Sequence number"
       },
-      "Trip": {
+      "trip_number": {
         "name": "Trip number"
       },
-      "Odo": {
+      "odometer": {
         "name": "Odometer"
       },
-      "SOC": {
+      "battery_state_of_charge": {
         "name": "Battery state of charge"
       },
-      "AHr": {
+      "battery_capacity": {
         "name": "Battery capacity"
       },
-      "BatTemp": {
+      "battery_temperature": {
         "name": "Battery temperature"
       },
-      "Amb": {
+      "ambient_temperature": {
         "name": "Ambient temperature"
       },
-      "ChrgPwr": {
+      "charge_power": {
         "name": "Charge power"
       },
-      "Wpr": {
+      "front_wiper": {
         "name": "Front wiper status"
       },
-      "PlugState": {
+      "plug_state": {
         "name": "Plug status"
       },
-      "ChrgMode": {
+      "charge_mode": {
         "name": "Charge mode"
       },
-      "VIN": {
+      "vin": {
         "name": "VIN"
       },
-      "RPM": {
+      "motor_speed": {
         "name": "Motor speed"
       },
-      "SOH": {
+      "battery_health": {
         "name": "Battery health"
       },
-      "Hx": {
+      "battery_conductance": {
         "name": "Battery conductance (Hx)"
       },
-      "Speed": {
+      "speed": {
         "name": "Speed"
       },
-      "BatVolts": {
+      "battery_voltage": {
         "name": "Battery voltage"
       },
-      "BatAmps": {
+      "battery_current": {
         "name": "Battery current"
       }
     }
