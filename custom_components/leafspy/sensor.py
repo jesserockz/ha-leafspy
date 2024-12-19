@@ -58,54 +58,12 @@ def _transform_hx(x):
 
 SENSOR_TYPES = [
     LeafSpySensorDescription(
-        key="phone_battery",
-        leafspy_key="DevBat",
-        native_unit_of_measurement=PERCENTAGE,
-        device_class=SensorDeviceClass.BATTERY,
+        key="ambient_temperature",
+        leafspy_key="Amb",
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
-    ),
-    LeafSpySensorDescription(
-        key="battery_gids",
-        leafspy_key="Gids",
-        native_unit_of_measurement="Gids",
-        state_class=SensorStateClass.MEASUREMENT,
-        icon="mdi:battery",
-    ),
-    LeafSpySensorDescription(
-        key="elevation",
-        leafspy_key="Elv",
-        native_unit_of_measurement=UnitOfLength.METERS,
-        device_class=SensorDeviceClass.DISTANCE,
-        state_class=SensorStateClass.MEASUREMENT,
-        transform_fn=lambda x: _safe_round(x, 2),
-        icon="mdi:elevation-rise",
-    ),
-    LeafSpySensorDescription(
-        key="sequence_number",
-        leafspy_key="Seq",
-        icon="mdi:numeric",
-    ),
-    LeafSpySensorDescription(
-        key="trip_number",
-        leafspy_key="Trip",
-        icon="mdi:road-variant",
-    ),
-    LeafSpySensorDescription(
-        key="odometer",
-        leafspy_key="Odo",
-        native_unit_of_measurement=UnitOfLength.KILOMETERS,
-        device_class=SensorDeviceClass.DISTANCE,
-        state_class=SensorStateClass.TOTAL_INCREASING,
-        transform_fn=lambda x: _safe_round(x, 1),
-        icon="mdi:counter",
-    ),
-    LeafSpySensorDescription(
-        key="battery_state_of_charge",
-        leafspy_key="SOC",
-        native_unit_of_measurement=PERCENTAGE,
-        device_class=SensorDeviceClass.BATTERY,
-        state_class=SensorStateClass.MEASUREMENT,
-        transform_fn=lambda x: _safe_round(x, 2),
+        icon="mdi:sun-thermometer",
     ),
     LeafSpySensorDescription(
         key="battery_capacity",
@@ -116,6 +74,43 @@ SENSOR_TYPES = [
         icon="mdi:battery-heart-variant",
     ),
     LeafSpySensorDescription(
+        key="battery_conductance",
+        leafspy_key="Hx",
+        native_unit_of_measurement=PERCENTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
+        transform_fn=lambda x: _safe_round(_transform_hx(x), 2),
+        icon="mdi:battery-heart-variant",
+    ),
+    LeafSpySensorDescription(
+        key="battery_current",
+        leafspy_key="BatAmps",
+        native_unit_of_measurement=UnitOfElectricCurrent.AMPERE,
+        device_class=SensorDeviceClass.CURRENT,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    LeafSpySensorDescription(
+        key="battery_health",
+        leafspy_key="SOH",
+        native_unit_of_measurement=PERCENTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
+        icon="mdi:battery-heart-variant",
+    ),
+    LeafSpySensorDescription(
+        key="battery_state_of_charge",
+        leafspy_key="SOC",
+        native_unit_of_measurement=PERCENTAGE,
+        device_class=SensorDeviceClass.BATTERY,
+        state_class=SensorStateClass.MEASUREMENT,
+        transform_fn=lambda x: _safe_round(x, 2),
+    ),
+    LeafSpySensorDescription(
+        key="battery_gids",
+        leafspy_key="Gids",
+        native_unit_of_measurement="Gids",
+        state_class=SensorStateClass.MEASUREMENT,
+        icon="mdi:battery",
+    ),
+    LeafSpySensorDescription(
         key="battery_temperature",
         leafspy_key="BatTemp",
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
@@ -123,12 +118,31 @@ SENSOR_TYPES = [
         state_class=SensorStateClass.MEASUREMENT,
     ),
     LeafSpySensorDescription(
-        key="ambient_temperature",
-        leafspy_key="Amb",
-        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
-        device_class=SensorDeviceClass.TEMPERATURE,
+        key="battery_voltage",
+        leafspy_key="BatVolts",
+        native_unit_of_measurement=UnitOfElectricPotential.VOLT,
+        device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
-        icon="mdi:sun-thermometer",
+        transform_fn=lambda x: _safe_round(x, 2),
+    ),
+    LeafSpySensorDescription(
+        key="charge_mode",
+        leafspy_key="ChrgMode",
+        device_class=SensorDeviceClass.ENUM,
+        transform_fn=lambda x: {
+            0: "Not charging",
+            1: "Level 1 charging",
+            2: "Level 2 charging",
+            3: "Level 3 quick charging"
+        }.get(int(x), "unknown"),
+        icon="mdi:ev-station",
+        options=[
+            "Not charging",
+            "Level 1 charging",
+            "Level 2 charging", 
+            "Level 3 quick charging",
+            "unknown"
+        ]
     ),
     LeafSpySensorDescription(
         key="charge_power",
@@ -136,6 +150,15 @@ SENSOR_TYPES = [
         native_unit_of_measurement=UnitOfPower.WATT,
         device_class=SensorDeviceClass.POWER,
         state_class=SensorStateClass.MEASUREMENT,
+    ),
+    LeafSpySensorDescription(
+        key="elevation",
+        leafspy_key="Elv",
+        native_unit_of_measurement=UnitOfLength.METERS,
+        device_class=SensorDeviceClass.DISTANCE,
+        state_class=SensorStateClass.MEASUREMENT,
+        transform_fn=lambda x: _safe_round(x, 2),
+        icon="mdi:elevation-rise",
     ),
     LeafSpySensorDescription(
         key="front_wiper",
@@ -159,6 +182,29 @@ SENSOR_TYPES = [
         ]
     ),
     LeafSpySensorDescription(
+        key="motor_speed",
+        leafspy_key="RPM",
+        native_unit_of_measurement="RPM",
+        state_class=SensorStateClass.MEASUREMENT,
+        icon="mdi:engine",
+    ),
+    LeafSpySensorDescription(
+        key="odometer",
+        leafspy_key="Odo",
+        native_unit_of_measurement=UnitOfLength.KILOMETERS,
+        device_class=SensorDeviceClass.DISTANCE,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+        transform_fn=lambda x: _safe_round(x, 1),
+        icon="mdi:counter",
+    ),
+    LeafSpySensorDescription(
+        key="phone_battery",
+        leafspy_key="DevBat",
+        native_unit_of_measurement=PERCENTAGE,
+        device_class=SensorDeviceClass.BATTERY,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    LeafSpySensorDescription(
         key="plug_state",
         leafspy_key="PlugState",
         device_class=SensorDeviceClass.ENUM,
@@ -176,50 +222,9 @@ SENSOR_TYPES = [
         ]
     ),
     LeafSpySensorDescription(
-        key="charge_mode",
-        leafspy_key="ChrgMode",
-        device_class=SensorDeviceClass.ENUM,
-        transform_fn=lambda x: {
-            0: "Not charging",
-            1: "Level 1 charging",
-            2: "Level 2 charging",
-            3: "Level 3 quick charging"
-        }.get(int(x), "unknown"),
-        icon="mdi:ev-station",
-        options=[
-            "Not charging",
-            "Level 1 charging",
-            "Level 2 charging", 
-            "Level 3 quick charging",
-            "unknown"
-        ]
-    ),
-    LeafSpySensorDescription(
-        key="vin",
-        leafspy_key="VIN",
-        icon="mdi:identifier",
-    ),
-    LeafSpySensorDescription(
-        key="motor_speed",
-        leafspy_key="RPM",
-        native_unit_of_measurement="RPM",
-        state_class=SensorStateClass.MEASUREMENT,
-        icon="mdi:engine",
-    ),
-    LeafSpySensorDescription(
-        key="battery_health",
-        leafspy_key="SOH",
-        native_unit_of_measurement=PERCENTAGE,
-        state_class=SensorStateClass.MEASUREMENT,
-        icon="mdi:battery-heart-variant",
-    ),
-    LeafSpySensorDescription(
-        key="battery_conductance",
-        leafspy_key="Hx",
-        native_unit_of_measurement=PERCENTAGE,
-        state_class=SensorStateClass.MEASUREMENT,
-        transform_fn=lambda x: _safe_round(_transform_hx(x), 2),
-        icon="mdi:battery-heart-variant",
+        key="sequence_number",
+        leafspy_key="Seq",
+        icon="mdi:numeric",
     ),
     LeafSpySensorDescription(
         key="speed",
@@ -229,19 +234,14 @@ SENSOR_TYPES = [
         state_class=SensorStateClass.MEASUREMENT,
     ),
     LeafSpySensorDescription(
-        key="battery_voltage",
-        leafspy_key="BatVolts",
-        native_unit_of_measurement=UnitOfElectricPotential.VOLT,
-        device_class=SensorDeviceClass.VOLTAGE,
-        state_class=SensorStateClass.MEASUREMENT,
-        transform_fn=lambda x: _safe_round(x, 2),
+        key="trip_number",
+        leafspy_key="Trip",
+        icon="mdi:road-variant",
     ),
     LeafSpySensorDescription(
-        key="battery_current",
-        leafspy_key="BatAmps",
-        native_unit_of_measurement=UnitOfElectricCurrent.AMPERE,
-        device_class=SensorDeviceClass.CURRENT,
-        state_class=SensorStateClass.MEASUREMENT,
+        key="vin",
+        leafspy_key="VIN",
+        icon="mdi:identifier",
     ),
 ]
 
