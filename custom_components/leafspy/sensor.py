@@ -194,7 +194,7 @@ SENSOR_TYPES = [
         native_unit_of_measurement=UnitOfLength.KILOMETERS,
         device_class=SensorDeviceClass.DISTANCE,
         state_class=SensorStateClass.TOTAL_INCREASING,
-        transform_fn=lambda x: _safe_round(x, 1),
+        transform_fn=lambda x: _safe_round(x, 0),
         icon="mdi:counter",
     ),
     LeafSpySensorDescription(
