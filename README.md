@@ -29,7 +29,7 @@ Plug a Bluetooth OBD2 adapter (like [this one](https://www.amazon.com/gp/product
 - In the **Units** section:
   - Choose `°C`
   - `Convert Outside Temperature`: `On`
-  - `CAN Odometer in Miles`: `On` if you see the option and if your car odometer displays in miles
+  - `CAN Odometer in Miles`: `On` (if you see the option and if your car odometer displays in miles)
 - In the **Server** section:
   - `Enable`: `On`
   - `Send Interval`: Whatever frequency you prefer
