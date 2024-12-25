@@ -20,68 +20,68 @@
       }
     },
     "sensor": {
-      "phone_battery": {
-        "name": "Phone battery"
-      },
-      "battery_gids": {
-        "name": "Battery state of charge (Gids)"
-      },
-      "elevation": {
-        "name": "Elevation"
-      },
-      "sequence_number": {
-        "name": "Sequence number"
-      },
-      "trip_number": {
-        "name": "Trip number"
-      },
-      "odometer": {
-        "name": "Odometer"
-      },
-      "battery_state_of_charge": {
-        "name": "Battery state of charge"
+      "ambient_temperature": {
+        "name": "Ambient temperature"
       },
       "battery_capacity": {
         "name": "Battery capacity"
       },
-      "battery_temperature": {
-        "name": "Battery temperature"
+      "battery_conductance": {
+        "name": "Battery conductance (Hx)"
       },
-      "ambient_temperature": {
-        "name": "Ambient temperature"
-      },
-      "charge_power": {
-        "name": "Charge power"
-      },
-      "front_wiper": {
-        "name": "Front wiper status"
-      },
-      "plug_state": {
-        "name": "Plug status"
-      },
-      "charge_mode": {
-        "name": "Charge mode"
-      },
-      "vin": {
-        "name": "VIN"
-      },
-      "motor_speed": {
-        "name": "Motor speed"
+      "battery_current": {
+        "name": "Battery current"
       },
       "battery_health": {
         "name": "Battery health"
       },
-      "battery_conductance": {
-        "name": "Battery conductance (Hx)"
+      "battery_state_of_charge": {
+        "name": "Battery state of charge"
       },
-      "speed": {
-        "name": "Speed"
+      "battery_gids": {
+        "name": "Battery state of charge (Gids)"
+      },
+      "battery_temperature": {
+        "name": "Battery temperature"
       },
       "battery_voltage": {
         "name": "Battery voltage"
       },
-      "battery_current": {
-        "name": "Battery current"
+      "charge_mode": {
+        "name": "Charge mode"
+      },
+      "charge_power": {
+        "name": "Charge power"
+      },
+      "elevation": {
+        "name": "Elevation"
+      },
+      "front_wiper": {
+        "name": "Front wiper status"
+      },
+      "motor_speed": {
+        "name": "Motor speed"
+      },
+      "odometer": {
+        "name": "Odometer"
+      },
+      "phone_battery": {
+        "name": "Phone battery"
+      },
+      "plug_state": {
+        "name": "Plug status"
+      },
+      "sequence_number": {
+        "name": "Sequence number"
+      },
+      "speed": {
+        "name": "Speed"
+      },
+      "trip_number": {
+        "name": "Trip number"
+      },
+      "vin": {
+        "name": "VIN"
       }
     }
   }
