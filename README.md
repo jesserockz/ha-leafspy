@@ -33,6 +33,8 @@ Plug a Bluetooth OBD2 adapter (like [this one](https://www.amazon.com/gp/product
 - In the **Server** section:
   - `Enable`: `On`
   - `Send Interval`: Whatever frequency you prefer
+  - `Server`: `A`
+  - `A: Enable`: `On`
   - `PW`: `<Generated and displayed during setup>`
   - `Http://` or `Https://`: Depends on your Home Assistant installation
   - `URL`: `<Displayed during setup>`
