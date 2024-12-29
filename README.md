@@ -65,7 +65,7 @@ _See [LeafSpy manual](https://leafspy.com/wp-content/uploads/2024/04/LeafSpy-Hel
 | sensor.leaf_battery_stat_of_charge_gids |  Gids | |
 | sensor.leaf_battery_temperature | °C (You must set this in the LeafSpy app; see instructions above.) | Unit adjustable in HA UI. |
 | sensor.leaf_battery_voltage | V | |
-| sensor.leaf_charge_mode | --- | |
+| sensor.leaf_charge_mode | --- | Reports "Not charging" or "Level 1/2/3 charging." |
 | sensor.leaf_charge_power | W | Not very accurate. For example, when charging via level 2 charging, it just guesses 6,000 W. |
 | sensor.leaf_elevation | m | Unit adjustable in HA UI |
 | sensor.leaf_front_wiper_status | --- | To get this information you may need to make a custom screen in LeafSpy to read wiper status. |
