@@ -286,13 +286,12 @@ async def async_setup_entry(
                     sensor = hass.data[DOMAIN]['sensors'].get(sensor_id)
                     
                     sensor_description = description
+
+                    # Leaf Spy sends temperatures in the unit selected in the
+                    # app, reported in the "Tunits" field.
+                    unit = None
                     if description.device_class == SensorDeviceClass.TEMPERATURE:
-                        # Leaf Spy sends temperatures in the unit selected in
-                        # the app, reported in the "Tunits" field.
-                        sensor_description = replace(
-                            description,
-                            native_unit_of_measurement=_temperature_unit(message),
-                        )
+                        unit = _temperature_unit(message)
 
                     if sensor is not None:
                         if sensor.hass is None:
@@ -301,10 +300,14 @@ async def async_setup_entry(
                             continue
                         # Update existing sensor
                         sensor.entity_description = sensor_description
+                        if unit is not None:
+                            sensor.set_native_unit(unit)
                         sensor.update_state(value)
                     else:
                         # Add a new sensor
                         sensor = LeafSpySensor(dev_id, sensor_description, value)
+                        if unit is not None:
+                            sensor.set_native_unit(unit)
                         hass.data[DOMAIN]['sensors'][sensor_id] = sensor
                         async_add_entities([sensor])
 
@@ -381,6 +384,14 @@ class LeafSpySensor(RestoreSensor):
         """Disable polling for this sensor."""
         return False
 
+    def set_native_unit(self, unit):
+        """Set the native unit of measurement.
+
+        Uses the _attr_ attribute so Home Assistant's cached unit property
+        is invalidated; replacing entity_description would not be.
+        """
+        self._attr_native_unit_of_measurement = unit
+
     def update_state(self, new_value):
         """Update the sensor state."""
         self._value = new_value
@@ -404,10 +415,7 @@ class LeafSpySensor(RestoreSensor):
                     self.entity_description.device_class == SensorDeviceClass.TEMPERATURE
                     and last_state.native_unit_of_measurement
                 ):
-                    self.entity_description = replace(
-                        self.entity_description,
-                        native_unit_of_measurement=last_state.native_unit_of_measurement,
-                    )
+                    self.set_native_unit(last_state.native_unit_of_measurement)
                 self._value = last_state.native_value
                 self.async_write_ha_state()  # Make sure the restored state is written
             except (ValueError, TypeError):
