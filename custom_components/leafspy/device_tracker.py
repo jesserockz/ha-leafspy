@@ -127,10 +127,15 @@ class LeafSpyDeviceTracker(TrackerEntity, RestoreEntity):
             return
 
         attr = state.attributes
+        latitude = attr.get(ATTR_LATITUDE)
+        longitude = attr.get(ATTR_LONGITUDE)
+        if not latitude and not longitude:
+            # Saved before 0,0 was treated as "no location".
+            latitude = longitude = None
         self._data = {
             'device_name': state.name,
-            'latitude': attr.get(ATTR_LATITUDE),
-            'longitude': attr.get(ATTR_LONGITUDE),
+            'latitude': latitude,
+            'longitude': longitude,
             'battery_level': attr.get(ATTR_BATTERY_LEVEL),
         }
 
