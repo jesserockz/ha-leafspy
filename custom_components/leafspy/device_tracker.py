@@ -5,12 +5,8 @@ from homeassistant.core import callback
 from homeassistant.const import (
     ATTR_LATITUDE,
     ATTR_LONGITUDE,
-    ATTR_BATTERY_LEVEL,
 )
-from homeassistant.components.device_tracker.const import SourceType
-from homeassistant.components.device_tracker.config_entry import (
-    TrackerEntity
-)
+from homeassistant.components.device_tracker import SourceType, TrackerEntity
 from homeassistant.util import slugify
 from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.helpers import device_registry
@@ -71,11 +67,6 @@ class LeafSpyDeviceTracker(TrackerEntity, RestoreEntity):
         return self._dev_id
 
     @property
-    def battery_level(self):
-        """Return the battery level of the car."""
-        return self._data.get('battery_level')
-        
-    @property
     def icon(self):
         """Return the icon for the device."""
         return 'mdi:car'
@@ -131,7 +122,6 @@ class LeafSpyDeviceTracker(TrackerEntity, RestoreEntity):
             'device_name': state.name,
             'latitude': attr.get(ATTR_LATITUDE),
             'longitude': attr.get(ATTR_LONGITUDE),
-            'battery_level': attr.get(ATTR_BATTERY_LEVEL),
         }
 
     @callback
@@ -147,8 +137,7 @@ def _parse_see_args(message):
     args = {
         'dev_id': dev_id,
         'latitude': float(message['Lat']),
-        'longitude': float(message['Long']),
-        'battery_level': float(message['SOC'])
+        'longitude': float(message['Long'])
     }
 
     return args
