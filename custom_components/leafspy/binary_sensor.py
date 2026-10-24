@@ -84,7 +84,9 @@ async def async_setup_entry(
         except Exception as err:
             _LOGGER.error("Error processing Leaf Spy message: %s", err)
 
-    async_dispatcher_connect(hass, DOMAIN, _process_message)
+    entry.async_on_unload(
+        async_dispatcher_connect(hass, DOMAIN, _process_message)
+    )
 
     # Restore previously loaded devices
     dev_reg = device_registry.async_get(hass)

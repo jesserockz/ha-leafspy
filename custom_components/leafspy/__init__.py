@@ -42,7 +42,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 
     hass.data[DOMAIN]['context'] = context
 
-    hass.http.register_view(LeafSpyView())
+    # The view can only be registered once per Home Assistant run; it reads
+    # the current context from hass.data, so it keeps working after a reload.
+    if not hass.data[DOMAIN].get('view_registered'):
+        hass.http.register_view(LeafSpyView())
+        hass.data[DOMAIN]['view_registered'] = True
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     
@@ -63,11 +67,16 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
         )
     )
     if unload_ok:
-        hass.data[DOMAIN].pop(entry.entry_id)
+        # Drop entity objects from this entry so a reload creates fresh ones.
+        hass.data[DOMAIN]['devices'] = {}
+        hass.data[DOMAIN]['sensors'] = {}
+        hass.data[DOMAIN]['binary_sensors'] = {}
 
-    hass.data[DOMAIN]["unsub"]()
+        if hass.data[DOMAIN]["unsub"] is not None:
+            hass.data[DOMAIN]["unsub"]()
+            hass.data[DOMAIN]["unsub"] = None
 
-    return True
+    return unload_ok
 
 
 class LeafSpyContext:

@@ -298,7 +298,9 @@ async def async_setup_entry(
             _LOGGER.error("Error processing Leaf Spy message: %s", err)
             _LOGGER.exception("Full traceback")
 
-    async_dispatcher_connect(hass, DOMAIN, _process_message)
+    entry.async_on_unload(
+        async_dispatcher_connect(hass, DOMAIN, _process_message)
+    )
     
     # Restore previously loaded sensors
     dev_reg = device_registry.async_get(hass)
