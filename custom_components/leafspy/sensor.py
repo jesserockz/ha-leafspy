@@ -295,6 +295,10 @@ async def async_setup_entry(
                         )
 
                     if sensor is not None:
+                        if sensor.hass is None:
+                            # Entity is disabled or not yet added to Home
+                            # Assistant; writing state would raise.
+                            continue
                         # Update existing sensor
                         sensor.entity_description = sensor_description
                         sensor.update_state(value)
