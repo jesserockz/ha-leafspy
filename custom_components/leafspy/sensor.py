@@ -46,6 +46,12 @@ def _safe_round(x, digits=2):
     except (ValueError, TypeError):
         return None
     
+def _temperature_unit(message):
+    """Return the temperature unit Leaf Spy used for this message."""
+    if str(message.get("Tunits", "")).strip().upper() == "F":
+        return UnitOfTemperature.FAHRENHEIT
+    return UnitOfTemperature.CELSIUS
+
 def _transform_hx(x):
     # if x > 100, divide by 102.4, otherwise return
     # takes care of iOS LeafSpy bug until patched
@@ -280,6 +286,13 @@ async def async_setup_entry(
                     sensor = hass.data[DOMAIN]['sensors'].get(sensor_id)
                     
                     sensor_description = description
+                    if description.device_class == SensorDeviceClass.TEMPERATURE:
+                        # Leaf Spy sends temperatures in the unit selected in
+                        # the app, reported in the "Tunits" field.
+                        sensor_description = replace(
+                            description,
+                            native_unit_of_measurement=_temperature_unit(message),
+                        )
 
                     if sensor is not None:
                         # Update existing sensor
@@ -382,6 +395,15 @@ class LeafSpySensor(RestoreSensor):
             _LOGGER.debug(f"Restored state for {self.name}: {last_state.native_value}")
 
             try:
+                # Restore the unit the value was reported in (e.g. Fahrenheit)
+                if (
+                    self.entity_description.device_class == SensorDeviceClass.TEMPERATURE
+                    and last_state.native_unit_of_measurement
+                ):
+                    self.entity_description = replace(
+                        self.entity_description,
+                        native_unit_of_measurement=last_state.native_unit_of_measurement,
+                    )
                 self._value = last_state.native_value
                 self.async_write_ha_state()  # Make sure the restored state is written
             except (ValueError, TypeError):
