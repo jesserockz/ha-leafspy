@@ -46,15 +46,6 @@ def _safe_round(x, digits=2):
     except (ValueError, TypeError):
         return None
     
-def _transform_odometer(x):
-    # Leaf Spy sends Odo=0 when it can't read the odometer (e.g. while the
-    # car is off or charging). Treat that as "no reading": a drop to 0 on a
-    # TOTAL_INCREASING sensor would be recorded as a meter reset.
-    value = _safe_round(x, 0)
-    if value is None or value <= 0:
-        return None
-    return value
-
 def _transform_hx(x):
     # if x > 100, divide by 102.4, otherwise return
     # takes care of iOS LeafSpy bug until patched
@@ -63,6 +54,15 @@ def _transform_hx(x):
         return x / 102.4
     else:
         return x
+
+def _transform_odometer(x):
+    # Leaf Spy sends Odo=0 when it can't read the odometer (e.g. while the
+    # car is off or charging). Treat that as "no reading": a drop to 0 on a
+    # TOTAL_INCREASING sensor would be recorded as a meter reset.
+    value = _safe_round(x, 0)
+    if value is None or value <= 0:
+        return None
+    return value
 
 
 SENSOR_TYPES = [
