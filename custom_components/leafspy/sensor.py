@@ -61,6 +61,15 @@ def _transform_hx(x):
     else:
         return x
 
+def _transform_odometer(x):
+    # Leaf Spy sends Odo=0 when it can't read the odometer (e.g. while the
+    # car is off or charging). Treat that as "no reading": a drop to 0 on a
+    # TOTAL_INCREASING sensor would be recorded as a meter reset.
+    value = _safe_round(x, 0)
+    if value is None or value <= 0:
+        return None
+    return value
+
 
 SENSOR_TYPES = [
     LeafSpySensorDescription(
@@ -200,7 +209,7 @@ SENSOR_TYPES = [
         native_unit_of_measurement=UnitOfLength.KILOMETERS,
         device_class=SensorDeviceClass.DISTANCE,
         state_class=SensorStateClass.TOTAL_INCREASING,
-        transform_fn=lambda x: _safe_round(x, 0),
+        transform_fn=_transform_odometer,
         icon="mdi:counter",
     ),
     LeafSpySensorDescription(
