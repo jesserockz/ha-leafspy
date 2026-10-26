@@ -8,6 +8,7 @@ from homeassistant.components.binary_sensor import (
     BinarySensorEntity,
     BinarySensorEntityDescription,
 )
+from homeassistant.const import STATE_OFF, STATE_ON
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -119,7 +120,8 @@ async def async_setup_entry(
         # For each device ID, recreate the sensor entities
         for description in BINARY_SENSOR_TYPES:
             sensor_id = f"{dev_id}_{description.key}"
-            sensor = LeafSpyBinarySensor(dev_id, description, False)
+            # Start unknown; async_added_to_hass restores the last state.
+            sensor = LeafSpyBinarySensor(dev_id, description, None)
             hass.data[DOMAIN]['binary_sensors'][sensor_id] = sensor
             entities.append(sensor)
     async_add_entities(entities)
@@ -177,11 +179,14 @@ class LeafSpyBinarySensor(BinarySensorEntity, RestoreEntity):
         last_state = await self.async_get_last_state()
         _LOGGER.debug(f"Last_state: {last_state}")
 
-        # if last_state:
-        #     try:
-        #         self._value = last_state.state
-        #     except (ValueError, TypeError):
-        #         _LOGGER.warning(f"Could not restore state for {self.name}")
+        # Restore the last known state after a restart, unless a message has
+        # already set a value. The state is stored as "on"/"off", so compare
+        # the string rather than using it directly (which made "off" truthy).
+        if self._value is None and last_state is not None:
+            if last_state.state == STATE_ON:
+                self._value = True
+            elif last_state.state == STATE_OFF:
+                self._value = False
         
         # Add this log line to confirm the method is being called
         _LOGGER.debug(f"async_added_to_hass called for {self.name}")
