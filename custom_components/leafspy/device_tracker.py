@@ -177,6 +177,8 @@ def _to_float(value):
 async def async_handle_message(context, message):
     """Handle an Leaf Spy message."""
     _LOGGER.debug("Received %s", redact_message(message))
+    if 'VIN' not in message:
+        return
 
     args = _parse_see_args(message)
     await context.async_see(**args)

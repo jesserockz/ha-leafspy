@@ -69,3 +69,9 @@ async def test_upload_does_not_require_ha_auth(hass, hass_client_no_auth, setup_
     client = await hass_client_no_auth()
     resp = await client.get(URL_LEAFSPY_PATH, params=BASE_MESSAGE)
     assert resp.status == 200
+async def test_message_without_vin_is_ignored(hass, send):
+    resp = await send(VIN=None)
+    assert resp.status == 200
+    assert [s for s in hass.states.async_all() if s.domain != "zone"] == []
+
+
