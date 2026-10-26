@@ -3,7 +3,7 @@ import re
 import secrets
 
 from homeassistant import config_entries
-from homeassistant.helpers.network import get_url
+from homeassistant.helpers.network import NoURLAvailableError, get_url
 
 from .const import URL_LEAFSPY_PATH, CONF_SECRET, DOMAIN
 
@@ -26,7 +26,13 @@ class LeafSpyFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         secret = secrets.token_hex(8)
 
-        url = get_url(self.hass, prefer_external = True, prefer_cloud = True)
+        try:
+            url = get_url(self.hass, prefer_external = True, prefer_cloud = True)
+        except NoURLAvailableError:
+            # No internal/external URL is configured or detectable. Show a
+            # placeholder instead of failing setup; the user fills in their
+            # Home Assistant address in Leaf Spy.
+            url = "<your-home-assistant-address>:8123"
         url = "{}{}".format(url, URL_LEAFSPY_PATH)
         url = re.sub(r"https?://", "", url)
 
