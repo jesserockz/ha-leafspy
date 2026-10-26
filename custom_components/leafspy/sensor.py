@@ -89,6 +89,14 @@ def _transform_odometer(x):
         return None
     return value
 
+def _nonzero(value):
+    # Once the car has been off a while, Leaf Spy sends 0 for battery fields it
+    # can no longer read (SOH, Gids, AHr, Hx). A real pack never reports 0
+    # there, so treat it as "no reading" and keep the last value.
+    if value is None or value == 0:
+        return None
+    return value
+
 
 SENSOR_TYPES = [
     LeafSpySensorDescription(
@@ -103,7 +111,7 @@ SENSOR_TYPES = [
         key="battery_capacity",
         leafspy_key="AHr",
         state_class=SensorStateClass.MEASUREMENT,
-        transform_fn=lambda x: _safe_round(x, 2),
+        transform_fn=lambda x: _nonzero(_safe_round(x, 2)),
         native_unit_of_measurement="Ah",
         icon="mdi:battery-heart-variant",
     ),
@@ -112,7 +120,7 @@ SENSOR_TYPES = [
         leafspy_key="Hx",
         native_unit_of_measurement=PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
-        transform_fn=lambda x: _safe_round(_transform_hx(x), 2),
+        transform_fn=lambda x: _nonzero(_safe_round(_transform_hx(x), 2)),
         icon="mdi:battery-heart-variant",
     ),
     LeafSpySensorDescription(
@@ -127,6 +135,7 @@ SENSOR_TYPES = [
         leafspy_key="SOH",
         native_unit_of_measurement=PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
+        transform_fn=lambda x: _nonzero(_safe_round(x, 2)),
         icon="mdi:battery-heart-variant",
     ),
     LeafSpySensorDescription(
@@ -142,6 +151,7 @@ SENSOR_TYPES = [
         leafspy_key="Gids",
         native_unit_of_measurement="Gids",
         state_class=SensorStateClass.MEASUREMENT,
+        transform_fn=lambda x: _nonzero(_safe_round(x, 0)),
         icon="mdi:battery",
     ),
     LeafSpySensorDescription(

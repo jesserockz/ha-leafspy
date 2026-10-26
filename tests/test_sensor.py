@@ -69,7 +69,7 @@ async def test_invalid_value_skips_only_that_sensor(hass, send, caplog):
     await send(ChrgMode="not-a-number", SOH="91")
 
     assert state_of(hass, "charge_mode").state == "Not charging"  # unchanged
-    assert state_of(hass, "battery_health").state == "91"  # still updated
+    assert float(state_of(hass, "battery_health").state) == 91  # still updated
     assert "Ignoring invalid Leaf Spy value for charge_mode" in caplog.text
 
 
