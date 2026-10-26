@@ -27,8 +27,9 @@ Plug a Bluetooth OBD2 adapter (like [this one](https://www.amazon.com/gp/product
   
 5. Configure your LeafSpy app settings using the information below, which will also be displayed on screen. If you don't have the app in front of you, copy down the password. The generated password will only be shown this once; if you don't copy it down, you'll have to uninstall the integration, restart, and reinstall. Open the LeafSpy app, go to `Menu` -> `Settings`.
 - In the **Units** section:
-  - Choose `°C` or `°F` (either works)
-  - `Convert Outside Temperature`: `On`
+  - Choose `°C` or `°F`
+  - `Convert Outside Temperature`: `On` if you chose °C, `Off` if you chose °F
+    - Leaf Spy only reports the outside temperature correctly with one of these two pairings. If the outside temperature in Home Assistant looks wrong (for example, far too hot), flip this setting.
   - `CAN Odometer in Miles`: `On` (if you see the option and if your car odometer displays in miles)
 - In the **Server** section:
   - `Enable`: `On`

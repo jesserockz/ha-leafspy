@@ -4,7 +4,7 @@
       "one_instance_allowed": "You may have only one instance of Leaf Spy installed, and you appear to have installed one already."
     },
     "create_entry": {
-      "default": "Open the LeafSpy app, go to `Menu` -> `Settings`.\n - In the **Units** section:\n   - Choose `°C` or `°F` (either works)\n   - `Convert Outside Temperature`: `On`.\n   - `CAN Odometer in Miles`: `On` (if you see the option and if your car odometer displays in miles)\n - In the **Server** section:\n   - `Enable`: `On`\n   - `Send Interval`: Whatever frequency you prefer\n   - `Server`: `A`\n   - `A: Enable`: `On`\n   - `PW`: `{secret}`\n   - `Http://` or `Https://`: Depends on your Home Assistant installation\n   - `URL`: `{url}`\n     - _(**Do not** include the http or https prefix in the URL field.)_"
+      "default": "Open the LeafSpy app, go to `Menu` -> `Settings`.\n - In the **Units** section:\n   - Choose `°C` or `°F`\n   - `Convert Outside Temperature`: `On` if you chose °C, `Off` if you chose °F (if the outside temperature in Home Assistant looks wrong, flip this setting)\n   - `CAN Odometer in Miles`: `On` (if you see the option and if your car odometer displays in miles)\n - In the **Server** section:\n   - `Enable`: `On`\n   - `Send Interval`: Whatever frequency you prefer\n   - `Server`: `A`\n   - `A: Enable`: `On`\n   - `PW`: `{secret}`\n   - `Http://` or `Https://`: Depends on your Home Assistant installation\n   - `URL`: `{url}`\n     - _(**Do not** include the http or https prefix in the URL field.)_"
     },
     "step": {
       "user": {
