@@ -8,7 +8,7 @@ jobs:
     runs-on: "ubuntu-latest"
     name: Validate
     steps:
-        - uses: "actions/checkout@v2"
+        - uses: "actions/checkout@v4"
 
         - name: HACS validation
           uses: "hacs/action@main"
@@ -18,13 +18,24 @@ jobs:
         - name: Hassfest validation
           uses: "home-assistant/actions/hassfest@master"
 
-  style:
+  lint:
     runs-on: "ubuntu-latest"
-    name: Check style formatting
+    name: Lint
     steps:
-        - uses: "actions/checkout@v2"
-        - uses: "actions/setup-python@v1"
+        - uses: "actions/checkout@v4"
+        - uses: "actions/setup-python@v5"
           with:
-            python-version: "3.x"
-        - run: python3 -m pip install black
-        - run: black .
+            python-version: "3.14"
+        - run: python3 -m pip install -r requirements_test.txt
+        - run: ruff check .
+
+  tests:
+    runs-on: "ubuntu-latest"
+    name: Tests
+    steps:
+        - uses: "actions/checkout@v4"
+        - uses: "actions/setup-python@v5"
+          with:
+            python-version: "3.14"
+        - run: python3 -m pip install -r requirements_test.txt
+        - run: pytest
