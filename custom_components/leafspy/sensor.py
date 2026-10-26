@@ -80,6 +80,11 @@ def _correct_swapped_battery_values(message):
         message["BatVolts"], message["BatAmps"] = message["BatAmps"], message["BatVolts"]
     return message
 
+# Plausible outside temperatures. The top end allows for a bumper sensor
+# heat-soaked in the sun, above any recorded air temperature (56.7 °C).
+AMBIENT_RANGE_C = (-50, 70)
+AMBIENT_RANGE_F = (-58, 158)
+
 def _drop_impossible_ambient(message):
     """Return the message without Amb if it isn't a plausible outside temperature."""
     # After reconnecting with the car off, Leaf Spy can repeat a stale outside
@@ -91,9 +96,9 @@ def _drop_impossible_ambient(message):
         return message
     value = _safe_round(amb)
     if _temperature_unit(message) == UnitOfTemperature.FAHRENHEIT:
-        low, high = -58, 140
+        low, high = AMBIENT_RANGE_F
     else:
-        low, high = -50, 60
+        low, high = AMBIENT_RANGE_C
     if value is not None and low <= value <= high:
         return message
     _LOGGER.debug("Ignoring implausible outside temperature: %s", amb)

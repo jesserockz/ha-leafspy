@@ -3,7 +3,7 @@
 After it reconnects with the car off it repeats a stale value (e.g. 188.6), and
 a mismatched Convert Outside Temperature setting can convert it twice (e.g.
 162.5 °F on a 72 °F day). Such readings are dropped so the sensor keeps its
-last value. Plausible limits: -50..60 °C, or -58..140 °F.
+last value. Plausible limits: -50..70 °C, or -58..158 °F.
 """
 import logging
 
@@ -21,11 +21,12 @@ def ambient(hass):
     ("units", "good", "good_c", "bad"),
     [
         ("C", "20.0", 20.0, "188.6"),  # stale value after reconnect, °C mode
-        ("C", "20.0", 20.0, "60.5"),
+        ("C", "20.0", 20.0, "70.5"),
         ("C", "20.0", 20.0, "-51"),
         ("F", "72.5", 22.5, "162.5"),  # converted twice, °F mode
         ("F", "72.5", 22.5, "371.5"),
-        ("F", "72.5", 22.5, "140.5"),
+        ("F", "72.5", 22.5, "158.5"),
+        ("F", "72.5", 22.5, "159.3"),  # converted twice on a cooler day
         ("F", "72.5", 22.5, "-60"),
     ],
 )
@@ -38,10 +39,11 @@ async def test_impossible_reading_keeps_last_value(hass, send, units, good, good
 @pytest.mark.parametrize(
     ("units", "value", "expected_c"),
     [
-        ("C", "60", 60.0),
+        ("C", "70", 70.0),
+        ("C", "65", 65.0),  # heat-soaked bumper sensor in sun
         ("C", "-50", -50.0),
         ("C", "-12.5", -12.5),
-        ("F", "140", 60.0),
+        ("F", "158", 70.0),
         ("F", "-58", -50.0),
         ("F", "5", -15.0),
     ],
