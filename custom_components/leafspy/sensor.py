@@ -46,6 +46,12 @@ def _safe_round(x, digits=2):
     except (ValueError, TypeError):
         return None
     
+def _temperature_unit(message):
+    """Return the temperature unit Leaf Spy used for this message."""
+    if str(message.get("Tunits", "")).strip().upper() == "F":
+        return UnitOfTemperature.FAHRENHEIT
+    return UnitOfTemperature.CELSIUS
+
 def _transform_hx(x):
     # if x > 100, divide by 102.4, otherwise return
     # takes care of iOS LeafSpy bug until patched
@@ -281,13 +287,27 @@ async def async_setup_entry(
                     
                     sensor_description = description
 
+                    # Leaf Spy sends temperatures in the unit selected in the
+                    # app, reported in the "Tunits" field.
+                    unit = None
+                    if description.device_class == SensorDeviceClass.TEMPERATURE:
+                        unit = _temperature_unit(message)
+
                     if sensor is not None:
+                        if sensor.hass is None:
+                            # Entity is disabled or not yet added to Home
+                            # Assistant; writing state would raise.
+                            continue
                         # Update existing sensor
                         sensor.entity_description = sensor_description
+                        if unit is not None:
+                            sensor.set_native_unit(unit)
                         sensor.update_state(value)
                     else:
                         # Add a new sensor
                         sensor = LeafSpySensor(dev_id, sensor_description, value)
+                        if unit is not None:
+                            sensor.set_native_unit(unit)
                         hass.data[DOMAIN]['sensors'][sensor_id] = sensor
                         async_add_entities([sensor])
 
@@ -364,6 +384,14 @@ class LeafSpySensor(RestoreSensor):
         """Disable polling for this sensor."""
         return False
 
+    def set_native_unit(self, unit):
+        """Set the native unit of measurement.
+
+        Uses the _attr_ attribute so Home Assistant's cached unit property
+        is invalidated; replacing entity_description would not be.
+        """
+        self._attr_native_unit_of_measurement = unit
+
     def update_state(self, new_value):
         """Update the sensor state."""
         self._value = new_value
@@ -382,6 +410,12 @@ class LeafSpySensor(RestoreSensor):
             _LOGGER.debug(f"Restored state for {self.name}: {last_state.native_value}")
 
             try:
+                # Restore the unit the value was reported in (e.g. Fahrenheit)
+                if (
+                    self.entity_description.device_class == SensorDeviceClass.TEMPERATURE
+                    and last_state.native_unit_of_measurement
+                ):
+                    self.set_native_unit(last_state.native_unit_of_measurement)
                 self._value = last_state.native_value
                 self.async_write_ha_state()  # Make sure the restored state is written
             except (ValueError, TypeError):
