@@ -5,7 +5,9 @@ from homeassistant.core import State
 from homeassistant.helpers import device_registry as dr
 from pytest_homeassistant_custom_component.common import mock_restore_cache
 
-from custom_components.leafspy.const import DOMAIN
+from custom_components.leafspy.const import DOMAIN, URL_LEAFSPY_PATH
+
+from .conftest import BASE_MESSAGE
 
 ENTITY = "binary_sensor.leaf_power"
 DEV_ID = "leaf_testvin0000000001"
@@ -49,9 +51,6 @@ async def test_power_unknown_after_restart_with_no_history(hass, config_entry):
 async def test_upload_after_restart_wins_over_restored_state(
     hass, config_entry, hass_client_no_auth
 ):
-    from .conftest import BASE_MESSAGE
-    from custom_components.leafspy.const import URL_LEAFSPY_PATH
-
     await _restart_with(hass, config_entry, STATE_ON)
     client = await hass_client_no_auth()
     await client.get(URL_LEAFSPY_PATH, params={**BASE_MESSAGE, "PwrSw": "0"})
