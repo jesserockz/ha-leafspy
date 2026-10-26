@@ -86,6 +86,7 @@ class LeafSpyContext:
         """Initialize a Leaf Spy context."""
         self.hass = hass
         self.secret = secret
+        self.auth_warned = False
         self._pending_msg = []
 
     @callback
@@ -113,13 +114,26 @@ class LeafSpyView(HomeAssistantView):
     async def get(self, request):
         """Handle leafspy call."""
         hass = request.app['hass']
-        context = hass.data[DOMAIN]['context']
+        context = hass.data.get(DOMAIN, {}).get('context')
+        if context is None:
+            return Response(status=503, text="")
+
+        message = request.query
+        password = message.get('pass', '')
+        if not hmac.compare_digest(
+            password.encode('utf-8'), context.secret.encode('utf-8')
+        ):
+            # Log the first rejection as a warning, then stay quiet until an
+            # upload succeeds, so a phone with an old password doesn't flood
+            # the log every few seconds.
+            log = _LOGGER.debug if context.auth_warned else _LOGGER.warning
+            log("Rejected Leaf Spy upload from %s: invalid password", request.remote)
+            context.auth_warned = True
+            return Response(status=401, text="")
+
+        context.auth_warned = False
 
         try:
-            message = request.query
-            if not hmac.compare_digest(message['pass'], context.secret):
-                raise Exception("Invalid password")
-
             async_dispatcher_send(hass, DOMAIN, context, message)
 
             return Response(status=200, text='"status":"0"')
