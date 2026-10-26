@@ -5,12 +5,8 @@ from homeassistant.core import callback
 from homeassistant.const import (
     ATTR_LATITUDE,
     ATTR_LONGITUDE,
-    ATTR_BATTERY_LEVEL,
 )
-from homeassistant.components.device_tracker.const import SourceType
-from homeassistant.components.device_tracker.config_entry import (
-    TrackerEntity
-)
+from homeassistant.components.device_tracker import SourceType, TrackerEntity
 from homeassistant.util import slugify
 from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.helpers import device_registry
@@ -72,11 +68,6 @@ class LeafSpyDeviceTracker(TrackerEntity, RestoreEntity):
         return self._dev_id
 
     @property
-    def battery_level(self):
-        """Return the battery level of the car."""
-        return self._data.get('battery_level')
-        
-    @property
     def icon(self):
         """Return the icon for the device."""
         return 'mdi:car'
@@ -128,16 +119,27 @@ class LeafSpyDeviceTracker(TrackerEntity, RestoreEntity):
             return
 
         attr = state.attributes
+        latitude = attr.get(ATTR_LATITUDE)
+        longitude = attr.get(ATTR_LONGITUDE)
+        if not latitude and not longitude:
+            # Saved before 0,0 was treated as "no location".
+            latitude = longitude = None
         self._data = {
             'device_name': state.name,
-            'latitude': attr.get(ATTR_LATITUDE),
-            'longitude': attr.get(ATTR_LONGITUDE),
-            'battery_level': attr.get(ATTR_BATTERY_LEVEL),
+            'latitude': latitude,
+            'longitude': longitude,
         }
 
     @callback
     def update_data(self, data):
         """Mark the device as seen."""
+        if data.get('latitude') is None or data.get('longitude') is None:
+            # No GPS fix in this message: keep the last known location.
+            data = {
+                **data,
+                'latitude': self._data.get('latitude'),
+                'longitude': self._data.get('longitude'),
+            }
         self._data = data
         self.async_write_ha_state()
 
@@ -145,14 +147,29 @@ class LeafSpyDeviceTracker(TrackerEntity, RestoreEntity):
 def _parse_see_args(message):
     """Parse the Leaf Spy parameters, into the format see expects."""
     dev_id = slugify('leaf_{}'.format(message['VIN']))
+
+    latitude = _to_float(message.get('Lat'))
+    longitude = _to_float(message.get('Long'))
+    # Leaf Spy sends 0,0 when the phone has no GPS fix or location is
+    # disabled. Treat that as "no location" rather than a real position.
+    if not latitude and not longitude:
+        latitude = longitude = None
+
     args = {
         'dev_id': dev_id,
-        'latitude': float(message['Lat']),
-        'longitude': float(message['Long']),
-        'battery_level': float(message['SOC'])
+        'latitude': latitude,
+        'longitude': longitude,
     }
 
     return args
+
+
+def _to_float(value):
+    """Convert a Leaf Spy value to float, or None if missing/invalid."""
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
 
 
 async def async_handle_message(context, message):

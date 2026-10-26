@@ -42,7 +42,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 
     hass.data[DOMAIN]['context'] = context
 
-    hass.http.register_view(LeafSpyView())
+    # The view can only be registered once per Home Assistant run; it reads
+    # the current context from hass.data, so it keeps working after a reload.
+    if not hass.data[DOMAIN].get('view_registered'):
+        hass.http.register_view(LeafSpyView())
+        hass.data[DOMAIN]['view_registered'] = True
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     
@@ -63,11 +67,16 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
         )
     )
     if unload_ok:
-        hass.data[DOMAIN].pop(entry.entry_id)
+        # Drop entity objects from this entry so a reload creates fresh ones.
+        hass.data[DOMAIN]['devices'] = {}
+        hass.data[DOMAIN]['sensors'] = {}
+        hass.data[DOMAIN]['binary_sensors'] = {}
 
-    hass.data[DOMAIN]["unsub"]()
+        if hass.data[DOMAIN]["unsub"] is not None:
+            hass.data[DOMAIN]["unsub"]()
+            hass.data[DOMAIN]["unsub"] = None
 
-    return True
+    return unload_ok
 
 
 class LeafSpyContext:
@@ -77,6 +86,7 @@ class LeafSpyContext:
         """Initialize a Leaf Spy context."""
         self.hass = hass
         self.secret = secret
+        self.auth_warned = False
         self._pending_msg = []
 
     @callback
@@ -104,13 +114,26 @@ class LeafSpyView(HomeAssistantView):
     async def get(self, request):
         """Handle leafspy call."""
         hass = request.app['hass']
-        context = hass.data[DOMAIN]['context']
+        context = hass.data.get(DOMAIN, {}).get('context')
+        if context is None:
+            return Response(status=503, text="")
+
+        message = request.query
+        password = message.get('pass', '')
+        if not hmac.compare_digest(
+            password.encode('utf-8'), context.secret.encode('utf-8')
+        ):
+            # Log the first rejection as a warning, then stay quiet until an
+            # upload succeeds, so a phone with an old password doesn't flood
+            # the log every few seconds.
+            log = _LOGGER.debug if context.auth_warned else _LOGGER.warning
+            log("Rejected Leaf Spy upload from %s: invalid password", request.remote)
+            context.auth_warned = True
+            return Response(status=401, text="")
+
+        context.auth_warned = False
 
         try:
-            message = request.query
-            if not hmac.compare_digest(message['pass'], context.secret):
-                raise Exception("Invalid password")
-
             async_dispatcher_send(hass, DOMAIN, context, message)
 
             return Response(status=200, text='"status":"0"')

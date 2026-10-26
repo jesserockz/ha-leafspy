@@ -63,8 +63,16 @@ async def async_setup_entry(
                 value = message.get(description.leafspy_key, None)
                 _LOGGER.debug(f"Binary sensor {description.key}: Initial value={value}")
 
-                if description.transform_fn:
-                    value = description.transform_fn(value)
+                if value is not None and description.transform_fn:
+                    try:
+                        value = description.transform_fn(value)
+                    except (ValueError, TypeError) as err:
+                        # Skip only this sensor; keep processing the others.
+                        _LOGGER.warning(
+                            "Ignoring invalid Leaf Spy value for %s: %s",
+                            description.key, err,
+                        )
+                        continue
                     _LOGGER.debug(f"Binary sensor {description.key}: Transformed value={value}")
 
                 if value is not None:
@@ -73,6 +81,10 @@ async def async_setup_entry(
                     sensor_description = description
 
                     if sensor is not None:
+                        if sensor.hass is None:
+                            # Entity is disabled or not yet added to Home
+                            # Assistant; writing state would raise.
+                            continue
                         sensor.entity_description = sensor_description
                         sensor.update_state(value)
                     else:
@@ -85,7 +97,9 @@ async def async_setup_entry(
         except Exception as err:
             _LOGGER.error("Error processing Leaf Spy message: %s", err)
 
-    async_dispatcher_connect(hass, DOMAIN, _process_message)
+    entry.async_on_unload(
+        async_dispatcher_connect(hass, DOMAIN, _process_message)
+    )
 
     # Restore previously loaded devices
     dev_reg = device_registry.async_get(hass)

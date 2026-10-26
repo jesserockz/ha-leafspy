@@ -27,7 +27,7 @@ Plug a Bluetooth OBD2 adapter (like [this one](https://www.amazon.com/gp/product
   
 5. Configure your LeafSpy app settings using the information below, which will also be displayed on screen. If you don't have the app in front of you, copy down the password. The generated password will only be shown this once; if you don't copy it down, you'll have to uninstall the integration, restart, and reinstall. Open the LeafSpy app, go to `Menu` -> `Settings`.
 - In the **Units** section:
-  - Choose `°C`
+  - Choose `°C` or `°F` (either works)
   - `Convert Outside Temperature`: `On`
   - `CAN Odometer in Miles`: `On` (if you see the option and if your car odometer displays in miles)
 - In the **Server** section:
@@ -56,14 +56,14 @@ _See [LeafSpy manual](https://leafspy.com/wp-content/uploads/2024/04/LeafSpy-Hel
 ### Sensors
 | Entity ID | Unit reported by LeafSpy | Note |
 | :-- | :-- | :-- |
-| sensor.leaf_ambient_temperature | °C (You must set this in the LeafSpy app; see instructions above.) | Unit adjustable in HA UI. |
+| sensor.leaf_ambient_temperature | °C or °F, as set in the LeafSpy app (see instructions above). | Unit adjustable in HA UI. |
 | sensor.leaf_battery_capacity | Ah | |
 | sensor.leaf_battery_conductance | % | Referred to as Hx in the LeafSpy manual. |
 | sensor.leaf_battery_current | A | |
 | sensor.leaf_battery_health | % | | 
 | sensor.leaf_battery_state_of_charge | % | |
 | sensor.leaf_battery_stat_of_charge_gids |  Gids | |
-| sensor.leaf_battery_temperature | °C (You must set this in the LeafSpy app; see instructions above.) | Unit adjustable in HA UI. |
+| sensor.leaf_battery_temperature | °C or °F, as set in the LeafSpy app (see instructions above). | Unit adjustable in HA UI. |
 | sensor.leaf_battery_voltage | V | |
 | sensor.leaf_charge_mode | --- | Reports "Not charging" or "Level 1/2/3 charging." |
 | sensor.leaf_charge_power | W | Not very accurate. For example, when charging via level 2 charging, it just guesses 6,000 W. |
