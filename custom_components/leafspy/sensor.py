@@ -80,6 +80,32 @@ def _correct_swapped_battery_values(message):
         message["BatVolts"], message["BatAmps"] = message["BatAmps"], message["BatVolts"]
     return message
 
+# Plausible outside temperatures. The top end allows for a bumper sensor
+# heat-soaked in the sun, above any recorded air temperature (56.7 °C).
+AMBIENT_RANGE_C = (-50, 70)
+AMBIENT_RANGE_F = (-58, 158)
+
+def _drop_impossible_ambient(message):
+    """Return the message without Amb if it isn't a plausible outside temperature."""
+    # After reconnecting with the car off, Leaf Spy can repeat a stale outside
+    # temperature (e.g. 188.6), and a mismatched Convert Outside Temperature
+    # setting can convert it twice (e.g. 162.5 °F on a 72 °F day). Drop values
+    # no weather produces, so the sensor keeps its last reading.
+    amb = message.get("Amb")
+    if amb is None:
+        return message
+    value = _safe_round(amb)
+    if _temperature_unit(message) == UnitOfTemperature.FAHRENHEIT:
+        low, high = AMBIENT_RANGE_F
+    else:
+        low, high = AMBIENT_RANGE_C
+    if value is not None and low <= value <= high:
+        return message
+    _LOGGER.debug("Ignoring implausible outside temperature: %s", amb)
+    message = dict(message)
+    del message["Amb"]
+    return message
+
 def _transform_odometer(x):
     # Leaf Spy sends Odo=0 when it can't read the odometer (e.g. while the
     # car is off or charging). Treat that as "no reading": a drop to 0 on a
@@ -308,6 +334,7 @@ async def async_setup_entry(
             dev_id = slugify(f'leaf_{message["VIN"]}')
 
             message = _correct_swapped_battery_values(message)
+            message = _drop_impossible_ambient(message)
 
             _LOGGER.debug("Incoming message: %s", redact_message(message))
 
