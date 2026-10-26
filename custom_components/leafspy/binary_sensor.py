@@ -62,8 +62,16 @@ async def async_setup_entry(
                 value = message.get(description.leafspy_key, None)
                 _LOGGER.debug(f"Binary sensor {description.key}: Initial value={value}")
 
-                if description.transform_fn:
-                    value = description.transform_fn(value)
+                if value is not None and description.transform_fn:
+                    try:
+                        value = description.transform_fn(value)
+                    except (ValueError, TypeError) as err:
+                        # Skip only this sensor; keep processing the others.
+                        _LOGGER.warning(
+                            "Ignoring invalid Leaf Spy value for %s: %s",
+                            description.key, err,
+                        )
+                        continue
                     _LOGGER.debug(f"Binary sensor {description.key}: Transformed value={value}")
 
                 if value is not None:
