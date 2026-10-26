@@ -36,7 +36,9 @@ async def async_setup_entry(hass, entry, async_add_entities):
     dev_reg = device_registry.async_get(hass)
     dev_ids = {
         identifier[1]
-        for device in dev_reg.devices.values()
+        for device in device_registry.async_entries_for_config_entry(
+            dev_reg, entry.entry_id
+        )
         for identifier in device.identifiers
         if identifier[0] == LS_DOMAIN
     }
