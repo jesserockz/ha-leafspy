@@ -27,6 +27,7 @@ from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 from homeassistant.util import slugify
 
 from .const import DOMAIN
+from .util import loggable_value, redact_message
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -278,14 +279,14 @@ async def async_setup_entry(
 
             dev_id = slugify(f'leaf_{message["VIN"]}')
 
-            _LOGGER.debug(f"Incoming message: {message}")
+            _LOGGER.debug("Incoming message: %s", redact_message(message))
 
             # Create and update sensors for each description
             for description in SENSOR_TYPES:
                 sensor_id = f"{dev_id}_{description.key}"
                 value = message.get(description.leafspy_key, None)
 
-                _LOGGER.debug(f"Sensor {description.key}: Initial value={value}")
+                _LOGGER.debug("Sensor %s: Initial value=%s", description.key, loggable_value(description.leafspy_key, value))
 
                 if value is not None and description.transform_fn:
                     try:
@@ -297,7 +298,7 @@ async def async_setup_entry(
                             description.key, err,
                         )
                         continue
-                    _LOGGER.debug(f"Sensor {description.key}: Transformed value={value}")
+                    _LOGGER.debug("Sensor %s: Transformed value=%s", description.key, loggable_value(description.leafspy_key, value))
 
                 if value is not None:
                     sensor = hass.data[DOMAIN]['sensors'].get(sensor_id)
@@ -329,7 +330,7 @@ async def async_setup_entry(
                         async_add_entities([sensor])
 
                         # Add a log to confirm the sensor is being registered
-                        _LOGGER.debug(f"Registered sensor: {sensor.name} with initial value: {value}")
+                        _LOGGER.debug("Registered sensor: %s with initial value: %s", sensor.name, loggable_value(description.leafspy_key, value))
 
         except Exception as err:
             _LOGGER.error("Error processing Leaf Spy message: %s", err)
@@ -426,7 +427,7 @@ class LeafSpySensor(RestoreSensor):
         last_state = await self.async_get_last_sensor_data()
         if last_state:
             # Log the restored state before transforming
-            _LOGGER.debug(f"Restored state for {self.name}: {last_state.native_value}")
+            _LOGGER.debug("Restored state for %s: %s", self.name, loggable_value(self.entity_description.leafspy_key, last_state.native_value))
 
             try:
                 # Restore the unit the value was reported in (e.g. Fahrenheit)

@@ -17,6 +17,7 @@ from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 from homeassistant.util import slugify
 
 from .const import DOMAIN
+from .util import redact_message
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -49,7 +50,7 @@ async def async_setup_entry(
     async def _process_message(context, message):
         """Process incoming sensor messages."""
         try:
-            _LOGGER.debug("Incoming message: %s", message)
+            _LOGGER.debug("Incoming message: %s", redact_message(message))
             if 'VIN' not in message:
                 return
 

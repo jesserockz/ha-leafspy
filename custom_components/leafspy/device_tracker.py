@@ -11,6 +11,7 @@ from homeassistant.util import slugify
 from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.helpers import device_registry
 from .const import DOMAIN as LS_DOMAIN
+from .util import redact_message
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -173,7 +174,7 @@ def _to_float(value):
 
 async def async_handle_message(context, message):
     """Handle an Leaf Spy message."""
-    _LOGGER.debug("Received %s", message)
+    _LOGGER.debug("Received %s", redact_message(message))
 
     args = _parse_see_args(message)
     await context.async_see(**args)
