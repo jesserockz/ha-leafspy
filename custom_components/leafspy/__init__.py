@@ -4,10 +4,9 @@ import hmac
 import logging
 
 from aiohttp.web import Response
-import voluptuous as vol
 
 from homeassistant.components.http.view import HomeAssistantView
-from homeassistant.config_entries import SOURCE_IMPORT, ConfigEntry
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import callback, HomeAssistant
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.dispatcher import async_dispatcher_connect, async_dispatcher_send
