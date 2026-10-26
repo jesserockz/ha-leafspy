@@ -61,6 +61,25 @@ def _transform_hx(x):
     else:
         return x
 
+def _correct_swapped_battery_values(message):
+    """Return the message with BatVolts and BatAmps swapped back if they arrived swapped."""
+    # The iOS app sometimes sends BatVolts and BatAmps swapped while the car is
+    # off (e.g. BatVolts=-0.00, BatAmps=392.00), until patched. Swap them back
+    # only when the values themselves look swapped, so correct senders are
+    # untouched. A Leaf pack never reads below ~200 V once it reports, and
+    # current stays within about -400..+200 A, so a "voltage" under 200 V next
+    # to a "current" of 200-450 can only be a swap. Negative or small currents
+    # and two zeros are never swapped; a missing or unparseable field means no swap.
+    volts = _safe_round(message.get("BatVolts"))
+    amps = _safe_round(message.get("BatAmps"))
+    if volts is None or amps is None:
+        return message
+    if volts < 200 and 200 <= amps <= 450:
+        _LOGGER.debug("Battery voltage and current arrived swapped; correcting")
+        message = dict(message)
+        message["BatVolts"], message["BatAmps"] = message["BatAmps"], message["BatVolts"]
+    return message
+
 def _transform_odometer(x):
     # Leaf Spy sends Odo=0 when it can't read the odometer (e.g. while the
     # car is off or charging). Treat that as "no reading": a drop to 0 on a
@@ -277,6 +296,8 @@ async def async_setup_entry(
                 return
 
             dev_id = slugify(f'leaf_{message["VIN"]}')
+
+            message = _correct_swapped_battery_values(message)
 
             _LOGGER.debug("Incoming message: %s", redact_message(message))
 
