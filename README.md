@@ -5,9 +5,10 @@
 [![License][license-shield]](LICENSE)
 
 [![hacs][hacsbadge]][hacs]
+[![Integration usage][usage-shield]][usage]
 ![Project Maintenance][maintenance-shield]
 
-<p align="center"><img src="leafspy.png" width="64"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/jesserockz/ha-leafspy/main/leafspy.png" width="64"></p>
 
 This Home Assistant component enables you to get information from your Nissan Leaf car into Home Assistant by integrating with the LeafSpy [Android](https://play.google.com/store/apps/details?id=com.Turbo3.Leaf_Spy_Pro&hl=en_US) or [iOS](https://apps.apple.com/us/app/leafspy-pro/id967376861) apps.
 
@@ -88,3 +89,5 @@ _See [LeafSpy manual](https://leafspy.com/wp-content/uploads/2024/04/LeafSpy-Hel
 [maintenance-shield]: https://img.shields.io/badge/maintainer-Will%20Adler%20%40wtadler-blue.svg?style=for-the-badge
 [releases-shield]: https://img.shields.io/github/release/jesserockz/ha-leafspy.svg?style=for-the-badge
 [releases]: https://github.com/jesserockz/ha-leafspy/releases
+[usage]: https://analytics.home-assistant.io/custom_integrations
+[usage-shield]: https://img.shields.io/badge/dynamic/json?style=for-the-badge&color=41BDF5&logo=home-assistant&label=integration%20usage&suffix=%20installs&cacheSeconds=15600&url=https://analytics.home-assistant.io/custom_integrations.json&query=$.leafspy.total
